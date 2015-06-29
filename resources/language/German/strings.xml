@@ -13,4 +13,7 @@
     <string id="30022">Shutdown</string>
     <string id="30023">Hibernate</string>
     <string id="30024">Suspend</string>
+    <!-- exceptions -->
+    <string id="30050">Es wurden keine LG Geräte im Netzwerk gefunden. Überprüfen Sie, ob die Geräte eingeschalten und korrekt im Heimnetzwerk eingebunden sind.</string>
+
 </strings>
