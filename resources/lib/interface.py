@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # encoding: utf-8
 
 __version__ = '0.5'
@@ -9,6 +9,9 @@ import socket
 
 import xml.etree.ElementTree as etree
 import httplib
+
+KEY_PAIRING='SMYBYA' # LG at Home
+# KEY_PAIRING='045855' # LG at Work
 
 KEY_IDX_3D=400
 KEY_IDX_ARROW_DOWN=2
@@ -49,6 +52,11 @@ class LGRemote:
     _xml_version_string = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
     _highest_key_input_for_protocol = {'hdcp': 255, 'roap': 1024}
+
+    class LGinNetworkNotFoundException(Exception): pass
+    class LGProtocolIssueException(Exception): pass
+    class LGProtocollNotAcceptedException(Exception): pass
+    class NoConnectionToHostException(Exception): pass
 
     def __init__(self, host=None, port=8080, protocol=None):
 
@@ -91,7 +99,7 @@ class LGRemote:
                 pass
         sock.close()
 
-        if not found: raise socket.error("LG TV not found.")
+        if not found: raise self.LGinNetworkNotFoundException('LG TV not found')
         logging.info("Using device: %s over transport protocol: %s" % (self.host, self.port))
         return self.host
 
@@ -99,7 +107,7 @@ class LGRemote:
         req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
         logging.debug("Detecting accepted protocol.")
         if self._doesServiceExist(3000):
-            raise Exception("Protocol not supported. See https://github.com/ypid/lgcommander/issues/1")
+            raise self.LGProtocolIssueException("Protocol not supported. See https://github.com/ypid/lgcommander/issues/1")
         try:
             for protocol in self._highest_key_input_for_protocol:
                 logging.debug("Testing protocol: %s" % (protocol))
@@ -111,9 +119,9 @@ class LGRemote:
                     self._protocol = protocol
                     logging.debug("Using protocol: %s" % (self._protocol))
                     return self._protocol
-            raise Exception("No accepted protocol found.")
+            raise self.LGProtocollNotAcceptedException("No accepted protocol found.")
         except:
-            raise socket.error("No connection to host %s" % (self.host))
+            raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
 
     def display_key_on_screen(self):
         conn = httplib.HTTPConnection(self.host, port=self.port)
@@ -184,7 +192,7 @@ def main():
     def get_pairing_key_from_user(lg_remote):
         lg_remote.display_key_on_screen()
         ####
-        session_id='045855'
+        session_id=KEY_PAIRING
         return session_id
 
     args = ArgumentParser(
@@ -247,7 +255,7 @@ def main():
         logging.debug("Pairing key from user %s" % (user_parms.pairing_key))
         lg_remote.get_session_id(user_parms.pairing_key)
     while not lg_remote._session_id:
-        logging.debug("No valid pairing key available. Showing key on TV screen...")
+        logging.debug("No pairing key available or unknown.")
         lg_remote.get_session_id(get_pairing_key_from_user(lg_remote))
 
     dialog_msg = "\nSession ID: " + str(lg_remote._session_id) + "\n"
@@ -271,4 +279,6 @@ def main():
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
-    main()
+    try:
+        main()
+    except LGRemote.LGinNetworkNotFoundException: print 'No LG TV found'

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+		<setting id="lg_host" type="text" label="30010" default="Scan" />
+		<setting id="lg_port" type="number" label="30011" default="8080" />
+		<setting id="lg_protocol" type="labelenum" label="30012" values="ROAP|HDCP|Auto detect" default="Auto detect" />
+		<setting id="lg_pairing_key" type="text" label="30013" default="" />
+        <setting id="sep" type="separator" />
+        <setting id="lg_scan_network" type="action" label="30014" option="close" action="RunScript(service.lgtv.remote, scan)" default="" />
+</settings>

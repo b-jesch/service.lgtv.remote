@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<strings>
+    <string id="30000">LG Remote 3D Switch</string>
+    <!-- setting strings -->
+    <string id="30010">IP oder Hostname des LG TV-Gerätes</string>
+    <string id="30011">Port</string>
+    <string id="30012">Protokoll</string>
+    <string id="30013">Pairing Schlüssel</string>
+    <string id="30014">LG TV-Geräte im Netzwerk suchen...</string>
+    <!-- defined actions -->
+    <string id="30020">Stop playing media</string>
+    <string id="30021">Reboot</string>
+    <string id="30022">Shutdown</string>
+    <string id="30023">Hibernate</string>
+    <string id="30024">Suspend</string>
+</strings>
