@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
-# Todo:
-# Use the same TCP connection.
-
 __version__ = '0.5'
 
 import re
@@ -44,34 +41,10 @@ KEY_IDX_VOL_DOWN=25
 KEY_IDX_VOL_UP=24
 KEY_IDX_YELLOW=32
 
-'''
-from tkinter import Tk, Toplevel, Entry, Button, Label
-
-class MyDialog:
-
-    def __init__(self, parent, dialog_msg):
-        self.user_string = None
-
-        top = self.top = Toplevel(parent)
-        Label(top, text=dialog_msg, justify='left').pack()
-        self.e = Entry(top)
-        self.e.pack(padx=5)
-        self.e.focus_set()
-        b = Button(top, text='Ok', command=self.ok)
-        b.pack(pady=5)
-        top.bind('<Return>', self.ok)
-        top.title("Lg Commander")
-        top.geometry("410x280+10+10")
-
-    def ok(self, dummy=None):
-        self.user_string = self.e.get()
-        self.top.destroy()
-'''
-
 class KeyInputError(Exception):
     pass
 
-class LgRemote:
+class LGRemote:
 
     _xml_version_string = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
@@ -93,18 +66,16 @@ class LgRemote:
 
     def getip(self):
         if self.host: return self.host
-        strngtoXmit = 'M-SEARCH * HTTP/1.1' + '\r\n' + 'HOST: 239.255.255.250:1900' + '\r\n' + \
-            'MAN: "ssdp:discover"' + '\r\n' + 'MX: 2' + '\r\n' + \
-            'ST: urn:schemas-upnp-org:device:MediaRenderer:1' + '\r\n' + '\r\n'
+        strngtoXmit = 'M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\n' + \
+            'MAN: "ssdp:discover"\r\nMX: 2\r\nST: urn:schemas-upnp-org:device:MediaRenderer:1\r\n\r\n'
 
         bytestoXmit = strngtoXmit.encode()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(3)
         found = False
-        gotstr = 'notyet'
         i = 0
 
-        while not found and i <= 5:
+        while not found and i < 5:
             try:
                 sock.sendto(bytestoXmit, ('239.255.255.250', 1900))
                 gotbytes, addressport = sock.recvfrom(512)
@@ -132,7 +103,7 @@ class LgRemote:
         try:
             for protocol in self._highest_key_input_for_protocol:
                 logging.debug("Testing protocol: %s" % (protocol))
-                conn = httplib.HTTPConnection(self.host, port=self.port, timeout=5)
+                conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
                 conn.request("POST", "/%s/api/auth" % (protocol), req_key_xml_string, headers=self._headers)
                 http_response = conn.getresponse()
                 logging.debug("Got response: %s" % (http_response.reason))
@@ -197,7 +168,7 @@ class LgRemote:
 
     def _doesServiceExist(self, port):
         try:
-            logging.debug("Trying to connect to port %s/tcp" % (port))
+            logging.debug("Trying to connect to port %s" % (port))
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(1)
             s.connect((self.host, port))
@@ -206,20 +177,13 @@ class LgRemote:
             return False
         return True
 
-def main():  # {{{
+def main():
+
     """Execute module in command line mode."""
 
     def get_pairing_key_from_user(lg_remote):
         lg_remote.display_key_on_screen()
-        '''
-        root = Tk()
-        root.withdraw()
-        dialog_msg = "Please enter the pairing key\nyou see on your TV screen\n"
-        dialog = MyDialog(root, dialog_msg)
-        root.wait_window(dialog.top)
-        session_id = dialog.user_string
-        dialog.top.destroy()
-        '''
+        ####
         session_id='045855'
         return session_id
 
@@ -269,14 +233,10 @@ def main():  # {{{
     )
     user_parms = args.parse_args()
 
-    logging.basicConfig(
-        format='# %(levelname)s: %(message)s',
-        level=logging.DEBUG,
-        # level=logging.INFO,
-    )
+    logging.basicConfig(format='# %(levelname)s: %(message)s', level=logging.DEBUG)
 
     try:
-        lg_remote = LgRemote(
+        lg_remote = LGRemote(
             host=None if user_parms.host == 'scan' else user_parms.host,
             port=user_parms.port,
             protocol=user_parms.protocol)
@@ -284,7 +244,7 @@ def main():  # {{{
         raise SystemExit(error)
 
     if user_parms.pairing_key:
-        logging.debug("Pairing key from user {}".format(user_parms.pairing_key))
+        logging.debug("Pairing key from user %s" % (user_parms.pairing_key))
         lg_remote.get_session_id(user_parms.pairing_key)
     while not lg_remote._session_id:
         logging.debug("No valid pairing key available. Showing key on TV screen...")
@@ -294,13 +254,12 @@ def main():  # {{{
     dialog_msg += "Paring key: " + str(lg_remote._pairing_key) + "\n"
     dialog_msg += "Success in establishing command session\n"
     dialog_msg += "_" * 64 + "\n\n"
-    dialog_msg += "Enter command code i.e. a number between 0 and 255\n"
-    dialog_msg += "Enter a number greater than 255 to quit.\n"
     dialog_msg += "Some useful codes:\n"
-    dialog_msg += "for EZ_ADJUST menu    enter   255 \n"
-    dialog_msg += "for IN START menu     enter   251 \n"
-    dialog_msg += "for Installation menu enter   207 \n"
-    dialog_msg += "for POWER_ONLY mode   enter   254 \n"
+    dialog_msg += "EZ_ADJUST menu:    255 \n"
+    dialog_msg += "IN START menu:     251 \n"
+    dialog_msg += "Installation menu: 207 \n"
+    dialog_msg += "POWER_ONLY mode:   254 \n"
+    dialog_msg += "_" * 64 + "\n\n"
     dialog_msg += "Warning: do not enter 254 if you \n"
     dialog_msg += "do not know what POWER_ONLY mode is. "
 
@@ -310,21 +269,6 @@ def main():  # {{{
         lg_remote.handle_key_input(user_parms.command)
         raise SystemExit()
 
-    '''
-    while True:
-        root = Tk()
-        root.withdraw()
-        dialog = MyDialog(root, dialog_msg)
-        root.wait_window(dialog.top)
-        try:
-            lg_remote.handle_key_input(dialog.user_string)
-        except KeyInputError:
-            logging.debug("Terminate on user requested.")
-            break
-    '''
-
 if __name__ == '__main__':
     from argparse import ArgumentParser
-
     main()
-# }}}

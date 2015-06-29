@@ -1,6 +1,5 @@
-# import xbmc
-import re,httplib
-import xml.etree.ElementTree as etree
+import xbmc
+from resources.lib import interface
 
 lgtv = {}
 lgtv["ipaddress"] = "141.55.92.113"
