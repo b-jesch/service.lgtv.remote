@@ -42,8 +42,7 @@ try:
         try:
             Remote = interface.LGRemote(host=None, port=8080, protocol=None)
         except interface.LGRemote.LGinNetworkNotFoundException:
-            notifyLog('LG Devices not found in network.'
-                      '')
+            notifyLog('LG Devices not found in network.')
             dialogOSD(__addonname__, __LS__(30050))
 
 except IndexError:
