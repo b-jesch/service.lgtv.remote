@@ -2,19 +2,21 @@
 <strings>
     <string id="30000">LG Remote 3D Switch</string>
     <!-- setting strings -->
-    <string id="30010">IP oder Hostname des LG TV-Gerätes</string>
+    <string id="30010">IP des LG Smart TV Gerätes</string>
     <string id="30011">Port</string>
     <string id="30012">Protokoll</string>
     <string id="30013">Pairing Schlüssel</string>
-    <string id="30014">LG TV-Geräte im Netzwerk suchen...</string>
+    <string id="30014">LG Smart TV Geräte im Netzwerk suchen...</string>
+    <string id="30015">ROAP</string>
+    <string id="30016">HDCP</string>
+    <string id="30017">automatische Suche</string>
     <!-- defined actions -->
     <string id="30020">Pairing Schlüssel des TV Gerätes eingeben</string>
-    <string id="30021">Reboot</string>
-    <string id="30022">Shutdown</string>
-    <string id="30023">Hibernate</string>
-    <string id="30024">Suspend</string>
+    <string id="30021">Pairing auf %s erfolgreich</string>
+    <string id="30022">Verbindung mit LG Smart TV hergestellt</string>
     <!-- exceptions -->
-    <string id="30050">Es wurden keine LG Geräte im Netzwerk gefunden. Überprüfen Sie, ob die Geräte eingeschalten sind oder geben Sie die IP-Adresse Ihres Gerätes manuell ein.</string>
-    <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll besteht.</string>
-    <string id="30052">Die Protokolle 'roap' und 'HDCP' werden von Ihrem Gerät nicht unterstützt. Ein Pairing ist nicht möglich.</string>
+    <string id="30050">Kein LG Smart TV Gerät im Netzwerk gefunden. Überprüfe, ob dieses eingeschalten ist, starte den Scan erneut oder gebe die IP Deines Gerätes ein.</string>
+    <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll aufgetreten ist.</string>
+    <string id="30052">Die Protokolle 'ROAP' und 'HDCP' werden nicht von Deinem Gerät unterstützt. Ein Pairing ist nicht möglich.</string>
+    <string id="30052">Keine Verbindung zur IP %s. Schalte Dein LG Smart TV ein oder überprüfe die Einstellungen des Addons.</string>
 </strings>

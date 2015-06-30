@@ -16,6 +16,8 @@ __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media'
 PLAYER = xbmc.Player()
 OSD = xbmcgui.Dialog()
 
+supported_protocols = {__LS__(30015): '30015', __LS_(30016): '30016'}
+
 def notifyOSD(header, message, icon=__IconDefault__):
     OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon)
 
@@ -28,34 +30,38 @@ def notifyLog(message, level=xbmc.LOGNOTICE):
 class switcher(object):
 
     def __init__(self):
-        self.lg_host = __addon__.getSetting('lg_host').lower()
-        self.lg_host = None if self.lg_host == 'scan' else self.lg_host
+        self.lg_host = __addon__.getSetting('lg_host')
+        self.lg_host = None if self.lg_host == 'scan...' else self.lg_host
         self.lg_port = __addon__.getSetting('lg_port')
-        self.lg_protocol = __addon__.getSetting('lg_protocol').lower()
-        self.lg_protocol = None if self.lg_protocol == 'auto detect' else self.lg_protocol
+        self.lg_protocol = __addon__.getSetting('lg_protocol')
+        self.lg_protocol = None if self.lg_protocol == __LS__(30017) else self.lg_protocol.lower()
         self.lg_pairing_key = __addon__.getSetting('lg_pairing_key')
 
-        Remote = interface.LGRemote(self.lg_host,self.lg_port, self.lg_protocol)
+        Remote = interface.LGRemote(self.lg_host, self.lg_port, self.lg_protocol)
 
 try:
     if sys.argv[1] == 'scan':
-        notifyLog("Scanning for LG Devices...")
+        notifyLog("Scanning for LG Smart TV Devices...")
         try:
-            host = None if __addon__.getSetting('lg_host').lower() == 'scan' else __addon__.getSetting('lg_host')
-            Remote = interface.LGRemote(host=host, port=8080, protocol=None)
-            host = Remote.host
-            protocol = Remote._protocol
-            notifyLog('Device (IP %s protocol %s) found' % (host, protocol.upper()))
+            _host = None if __addon__.getSetting('lg_host').lower() == 'scan' else __addon__.getSetting('lg_host')
+            Remote = interface.LGRemote(host=_host, port=8080, protocol=None)
+            _host = Remote.host
+            _protocol = Remote.protocol
+            notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()))
             #
             # input pairing key:
             kb = xbmc.Keyboard('', __LS__(30020))
             kb.doModal()
             if kb.isConfirmed() and kb.getText() != '':
-                pairing_key = kb.getText()
-                _conn = Remote.get_session_id(pairing_key)
+                _pairing_key = kb.getText()
+                _conn = Remote.get_session_id(_pairing_key)
                 if _conn:
                     notifyLog('Session with ID %s established' % (Remote.session_id))
                     # we are ready
+                    notifyOSD(__LS__(30021) % (_host), __LS__(30022))
+                    __addon__.setSetting('lg_host', _host)
+                    __addon__.setSetting('lg_protocol', _protocol.upper())
+                    __addon__.setSetting('lg_pairing_key', _pairing_key)
 
         except interface.LGRemote.LGinNetworkNotFoundException:
             notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)
@@ -68,6 +74,6 @@ try:
             dialogOSD(__LS__(30052))
         except interface.LGRemote.NoConnectionToHostException:
             notifyLog('No connection to host.', level=xbmc.LOGERROR)
-
+            dialogOSD(__LS__(30053))
 except IndexError:
     pass

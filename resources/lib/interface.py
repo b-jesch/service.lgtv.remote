@@ -6,11 +6,12 @@ __version__ = '0.5'
 import re
 import logging
 import socket
+import time
 
 import xml.etree.ElementTree as etree
 import httplib
 
-KEY_PAIRING='SMYBYA' # LG at Home
+# KEY_PAIRING='SMYBYA' # LG at Home
 # KEY_PAIRING='045855' # LG at Work
 
 KEY_IDX_3D=400
@@ -94,6 +95,7 @@ class LGRemote(object):
                     found = True
                     break
                 i += 1
+                time.sleep(1)
             except:
                 pass
         sock.close()
@@ -253,9 +255,11 @@ def main():
     if user_parms.pairing_key:
         logging.debug("Pairing key from user %s" % (user_parms.pairing_key))
         lg_remote.get_session_id(user_parms.pairing_key)
-    while not lg_remote.session_id:
-        logging.debug("No pairing key available or unknown.")
-        lg_remote.get_session_id(get_pairing_key_from_user(lg_remote))
+    if not lg_remote.session_id:
+        logging.debug("No pairing key available or incorrect or unknown.")
+        lg_remote.display_key_on_screen()
+        logging.debug("Displaying Key on LG TV screen. Use that as an argument.")
+        raise SystemExit()
 
     dialog_msg = "\nSession ID: " + str(lg_remote.session_id) + "\n"
     dialog_msg += "Paring key: " + str(lg_remote._pairing_key) + "\n"
