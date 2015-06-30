@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="service.lgtv.remote"
-       name="LG TV Remote 3D Switch"
+       name="LG smart TV 3D Switch"
        version="0.0.1"
        provider-name="Birger Jesch">
   <extension point="xbmc.service"
@@ -9,12 +9,12 @@
 	    library="default.py" /> -->
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
-    <summary lang="en">LG TV Remote 3D Switch</summary>
-    <description lang="en">This addon switches your LG TV into 3D mode automatically over the network if an 3D movie is playing. For this, the TV device must be integrated in your home network properly.</description>
-    <summary lang="de">LG TV Remote 3D Switch</summary>
-    <description lang="de">Dieses Addon schaltet Dein LG TV-Gerät über das Netzwerk in den 3D-Modus, sobald ein als 3D gekennzeichneter Film abgespielt wird. Dazu muss das TV-Gerät korrekt in das Heimnetzwerk eingebunden sein.</description>
-    <disclaimer lang="de">Benutzung auf eigene Gefahr</disclaimer>
-    <disclaimer lang="en">Use at your own risk</disclaimer>
+    <summary lang="en">LG smart TV 3D Switch</summary>
+    <description lang="en">This addon switches your LG Smart TV into 3D mode automatically over the network if an 3D movie is playing. For this, the TV device must be integrated in your home network properly.</description>
+    <summary lang="de">LG smart TV 3D Switch</summary>
+    <description lang="de">Dieses Addon schaltet Dein LG Smart TV-Gerät über das Netzwerk in den 3D-Modus, sobald ein als 3D markierter Film abgespielt wird. Der LG Smart TV muss dazu korrekt in das Heimnetzwerk eingebunden sein.</description>
+    <disclaimer lang="de">Benutzung auf eigene Gefahr. Keine unbekannten Code-Sequenzen verwenden!</disclaimer>
+    <disclaimer lang="en">Use at your own risk. Don't use unknown code sequences!</disclaimer>
     <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
     <forum></forum>
     <website>http://vdr4bj1.no-ip.org</website>

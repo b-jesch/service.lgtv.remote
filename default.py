@@ -16,8 +16,6 @@ __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media'
 PLAYER = xbmc.Player()
 OSD = xbmcgui.Dialog()
 
-supported_protocols = {__LS__(30015): '30015', __LS_(30016): '30016'}
-
 def notifyOSD(header, message, icon=__IconDefault__):
     OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon)
 
@@ -74,6 +72,6 @@ try:
             dialogOSD(__LS__(30052))
         except interface.LGRemote.NoConnectionToHostException:
             notifyLog('No connection to host.', level=xbmc.LOGERROR)
-            dialogOSD(__LS__(30053))
+            dialogOSD(__LS__(30053) % (_host))
 except IndexError:
     pass

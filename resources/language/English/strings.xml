@@ -6,10 +6,12 @@
     <string id="30011">Communication Port</string>
     <string id="30012">Communication Protocol</string>
     <string id="30013">Pairing Key</string>
-    <string id="30014">Scan Network for LG Smart Devices...</string>
+    <string id="30014">Scan Network for LG Smart TV Device...</string>
     <string id="30015">ROAP</string>
     <string id="30016">HDCP</string>
     <string id="30017">auto detect</string>
+    <string id="30018">Use own key code sequence</string>
+    <string id="30019">Key code sequence</string>
     <!-- defined actions -->
     <string id="30020">Type in pairing key of TV device</string>
     <string id="30021">Device on %s paired</string>
@@ -18,5 +20,5 @@
     <string id="30050">There wasn't found any LG Smart Devices on your network. Be sure your devices are turned on or enter IP of LG Smart TV manually.</string>
     <string id="30051">There seems to be an issue with the used device protocol. Device can't be paired.</string>
     <string id="30052">Protocol types 'ROAP' and 'HDCP' are not accepted by your device. Can't pair.</string>
-    <string id="30052">No connection to %s. Turn your LG Smart TV on or check your settings.</string>
+    <string id="30053">No connection to IP address %s. Turn your LG Smart TV on or check your settings.</string>
 </strings>

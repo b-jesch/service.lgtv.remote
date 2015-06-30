@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <settings>
-		<setting id="lg_host" type="text" label="30010" default="scan..." />
-		<setting id="lg_port" type="number" label="30011" default="8080" />
-		<setting id="lg_protocol" type="labelenum" label="30012" lvalues="30017|30015|30016" />
-		<setting id="lg_pairing_key" type="text" label="30013" default="" />
-        <setting type="sep" />
-        <setting id="lg_scan_network" type="action" label="30014" option="close" action="RunScript(service.lgtv.remote, scan)" default="" />
+    <setting id="lg_host" type="text" label="30010" default="scan..." />
+    <setting id="lg_port" type="number" label="30011" default="8080" />
+    <setting id="lg_protocol" type="labelenum" label="30012" lvalues="30017|30015|30016" />
+    <setting id="lg_pairing_key" type="text" label="30013" default="" />
+    <setting type="sep" />
+    <setting id="lg_scan_network" type="action" label="30014" option="close" action="RunScript(service.lgtv.remote, scan)" default="" />
+    <setting type="sep" />
+    <setting id="lg_use_own_keycodes" type="bool" label="30018" default="false" />
+    <setting id="lg_own_keycodes" type="text" label="30019" default="" visible="eq(-1,true)" />
 </settings>

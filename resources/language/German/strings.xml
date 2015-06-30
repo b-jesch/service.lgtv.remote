@@ -6,10 +6,12 @@
     <string id="30011">Port</string>
     <string id="30012">Protokoll</string>
     <string id="30013">Pairing Schlüssel</string>
-    <string id="30014">LG Smart TV Geräte im Netzwerk suchen...</string>
+    <string id="30014">LG Smart TV Gerät im Netzwerk suchen...</string>
     <string id="30015">ROAP</string>
     <string id="30016">HDCP</string>
     <string id="30017">automatische Suche</string>
+    <string id="30018">Eigene Tastencode-Sequenz verwenden</string>
+    <string id="30019">Tastencode-Sequenz</string>
     <!-- defined actions -->
     <string id="30020">Pairing Schlüssel des TV Gerätes eingeben</string>
     <string id="30021">Pairing auf %s erfolgreich</string>
@@ -18,5 +20,5 @@
     <string id="30050">Kein LG Smart TV Gerät im Netzwerk gefunden. Überprüfe, ob dieses eingeschalten ist, starte den Scan erneut oder gebe die IP Deines Gerätes ein.</string>
     <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll aufgetreten ist.</string>
     <string id="30052">Die Protokolle 'ROAP' und 'HDCP' werden nicht von Deinem Gerät unterstützt. Ein Pairing ist nicht möglich.</string>
-    <string id="30052">Keine Verbindung zur IP %s. Schalte Dein LG Smart TV ein oder überprüfe die Einstellungen des Addons.</string>
+    <string id="30053">Keine Verbindung zur IP-Adresse %s. Schalte Dein LG Smart TV ein und/oder überprüfe Deine Einstellungen.</string>
 </strings>
