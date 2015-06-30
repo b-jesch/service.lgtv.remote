@@ -8,11 +8,13 @@
     <string id="30013">Pairing Key</string>
     <string id="30014">Scan Network for Devices...</string>
     <!-- defined actions -->
-    <string id="30020">Stop playing media</string>
+    <string id="30020">Type in pairing key of TV device</string>
     <string id="30021">Reboot</string>
     <string id="30022">Shutdown</string>
     <string id="30023">Hibernate</string>
     <string id="30024">Suspend</string>
     <!-- exceptions -->
-    <string id="30050">There wasn't found any LG Device on your network. Be sure your devices are turned on and network is set up properly.</string>
+    <string id="30050">There wasn't found any LG Devices on your network. Be sure your devices are turned on or enter IP of device manually.</string>
+    <string id="30051">There seems to be an issue with the used device protocol. Device can't be paired.</string>
+    <string id="30052">Protocol type 'roap' and 'HDCP' are not accepted by your device. Can't pair.</string>
 </strings>

@@ -8,12 +8,13 @@
     <string id="30013">Pairing Schlüssel</string>
     <string id="30014">LG TV-Geräte im Netzwerk suchen...</string>
     <!-- defined actions -->
-    <string id="30020">Stop playing media</string>
+    <string id="30020">Pairing Schlüssel des TV Gerätes eingeben</string>
     <string id="30021">Reboot</string>
     <string id="30022">Shutdown</string>
     <string id="30023">Hibernate</string>
     <string id="30024">Suspend</string>
     <!-- exceptions -->
-    <string id="30050">Es wurden keine LG Geräte im Netzwerk gefunden. Überprüfen Sie, ob die Geräte eingeschalten und korrekt im Heimnetzwerk eingebunden sind.</string>
-
+    <string id="30050">Es wurden keine LG Geräte im Netzwerk gefunden. Überprüfen Sie, ob die Geräte eingeschalten sind oder geben Sie die IP-Adresse Ihres Gerätes manuell ein.</string>
+    <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll besteht.</string>
+    <string id="30052">Die Protokolle 'roap' und 'HDCP' werden von Ihrem Gerät nicht unterstützt. Ein Pairing ist nicht möglich.</string>
 </strings>

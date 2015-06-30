@@ -1,4 +1,5 @@
 import xbmc, xbmcgui, xbmcaddon
+import os
 from resources.lib import interface
 
 __addon__ = xbmcaddon.Addon()
@@ -18,7 +19,7 @@ OSD = xbmcgui.Dialog()
 def notifyOSD(header, message, icon=__IconDefault__):
     OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon)
 
-def dialogOSD(header, message):
+def dialogOSD(message, header=__addonname__):
     OSD.ok(header.encode('utf-8'), message.encode('utf-8'))
 
 def notifyLog(message, level=xbmc.LOGNOTICE):
@@ -40,10 +41,33 @@ try:
     if sys.argv[1] == 'scan':
         notifyLog("Scanning for LG Devices...")
         try:
-            Remote = interface.LGRemote(host=None, port=8080, protocol=None)
+            host = None if __addon__.getSetting('lg_host').lower() == 'scan' else __addon__.getSetting('lg_host')
+            Remote = interface.LGRemote(host=host, port=8080, protocol=None)
+            host = Remote.host
+            protocol = Remote._protocol
+            notifyLog('Device (IP %s protocol %s) found' % (host, protocol.upper()))
+            #
+            # input pairing key:
+            kb = xbmc.Keyboard('', __LS__(30020))
+            kb.doModal()
+            if kb.isConfirmed() and kb.getText() != '':
+                pairing_key = kb.getText()
+                _conn = Remote.get_session_id(pairing_key)
+                if _conn:
+                    notifyLog('Session with ID %s established' % (Remote.session_id))
+                    # we are ready
+
         except interface.LGRemote.LGinNetworkNotFoundException:
-            notifyLog('LG Devices not found in network.')
-            dialogOSD(__addonname__, __LS__(30050))
+            notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)
+            dialogOSD( __LS__(30050))
+        except interface.LGRemote.LGProtocolIssueException:
+            notifyLog('There is an issue with the device protocol.', level=xbmc.LOGERROR)
+            dialogOSD(__LS__(30051))
+        except interface.LGRemote.LGProtocollNotAcceptedException:
+            notifyLog('Protocol not supported.', level=xbmc.LOGERROR)
+            dialogOSD(__LS__(30052))
+        except interface.LGRemote.NoConnectionToHostException:
+            notifyLog('No connection to host.', level=xbmc.LOGERROR)
 
 except IndexError:
     pass

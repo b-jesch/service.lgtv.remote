@@ -47,7 +47,7 @@ KEY_IDX_YELLOW=32
 class KeyInputError(Exception):
     pass
 
-class LGRemote:
+class LGRemote(object):
 
     _xml_version_string = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
@@ -62,15 +62,14 @@ class LGRemote:
 
         self.port = int(port)
         self.host = host
-        if host == None: self.getip()
+        if host == None: self.host = self.getip()
 
+        self.protocol = protocol
         if protocol == None:
-            self.auto_detect_accepted_protocol()
-        else:
-            self._protocol = protocol
+            self.protocol = self.auto_detect_accepted_protocol()
 
         self._pairing_key = None
-        self._session_id = None
+        self.session_id = None
 
     def getip(self):
         if self.host: return self.host
@@ -134,24 +133,24 @@ class LGRemote:
 
         return http_response.reason
 
-    def get_session_id(self, paring_key):
-        if not paring_key: return None
+    def get_session_id(self, pairing_key):
+        if not pairing_key: return False
 
-        self._pairing_key = paring_key
+        self._pairing_key = pairing_key
         logging.debug("Trying paring key: %s" % (self._pairing_key))
         pair_cmd_xml_string = self._xml_version_string + '<auth><type>AuthReq</type><value>' + \
             self._pairing_key + '</value></auth>'
         conn = httplib.HTTPConnection(self.host, port=self.port)
         conn.request('POST', '/%s/api/auth' % (self._protocol), pair_cmd_xml_string, headers=self._headers)
         http_response = conn.getresponse()
-        if http_response.reason != 'OK': return None
+        if http_response.reason != 'OK': return False
 
         tree = etree.XML(http_response.read())
-        self._session_id = tree.find('session').text
-        logging.debug("Session ID is %s" % (self._session_id))
-        if len(self._session_id) < 8: raise Exception("Could not get Session Id: %s" % (self._session_id))
+        self.session_id = tree.find('session').text
+        logging.debug("Session ID is %s" % (self.session_id))
+        if len(self.session_id) < 8: return False
 
-        return self._session_id
+        return self.session_id
 
     def handle_key_input(self, cmdcode):
         highest_key_input = self._highest_key_input_for_protocol[self._protocol]
@@ -160,7 +159,7 @@ class LGRemote:
                 raise KeyInputError("Key input %s is not supported." % (cmdcode))
         except ValueError:
             raise KeyInputError("Key input %s is not a number" % (cmdcode))
-        if not self._session_id: raise Exception("No valid session key available.")
+        if not self.session_id: raise Exception("No valid session key available.")
 
         command_url_for_protocol = {
             'hdcp': '/%s/api/dtv_wifirc' % (self._protocol),
@@ -168,7 +167,7 @@ class LGRemote:
         }
 
         logging.debug("Executing command: %s" % (cmdcode))
-        key_input_xml_string = self._xml_version_string + '<command><session>' + self._session_id \
+        key_input_xml_string = self._xml_version_string + '<command><session>' + self.session_id \
             + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
         conn = httplib.HTTPConnection(self.host, port=self.port)
         conn.request('POST', command_url_for_protocol[self._protocol], key_input_xml_string, headers=self._headers)
@@ -254,11 +253,11 @@ def main():
     if user_parms.pairing_key:
         logging.debug("Pairing key from user %s" % (user_parms.pairing_key))
         lg_remote.get_session_id(user_parms.pairing_key)
-    while not lg_remote._session_id:
+    while not lg_remote.session_id:
         logging.debug("No pairing key available or unknown.")
         lg_remote.get_session_id(get_pairing_key_from_user(lg_remote))
 
-    dialog_msg = "\nSession ID: " + str(lg_remote._session_id) + "\n"
+    dialog_msg = "\nSession ID: " + str(lg_remote.session_id) + "\n"
     dialog_msg += "Paring key: " + str(lg_remote._pairing_key) + "\n"
     dialog_msg += "Success in establishing command session\n"
     dialog_msg += "_" * 64 + "\n\n"
