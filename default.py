@@ -43,13 +43,14 @@ class service(xbmc.Player):
     def __init__(self):
 
         xbmc.Player.__init__(self)
+        self.Monitor = xbmc.Monitor()
         self.Remote = None
 
         self.getSettings()
 
     def getSettings(self):
         self.lg_host = __addon__.getSetting('lg_host')
-        self.lg_host = None if self.lg_host == 'scan...' else self.lg_host
+        self.lg_host = None if self.lg_host == '' else self.lg_host
         self.lg_port = __addon__.getSetting('lg_port')
         self.lg_protocol = __addon__.getSetting('lg_protocol')
         self.lg_protocol = None if self.lg_protocol == __LS__(30017) else self.lg_protocol.lower()
@@ -60,9 +61,8 @@ class service(xbmc.Player):
         if self.lg_host is not None: self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
 
     def sendCommand(self, code):
-        if self.Remote is None:
-            self.getSettings()
-            if self.Remote is None: return False
+        if self.lg_host is None: self.getSettings()
+        if self.Remote is None: return False
         try:
             if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
             notifyLog('Sending keycode %s. Response: %s' % (code, self.Remote.handle_key_input(code)))
@@ -75,34 +75,38 @@ class service(xbmc.Player):
             _file = self.getPlayingFile()
             if re.search(__pattern3D__, _file).group(0) and (re.search(__patternSBS__, _file).group(0) or re.search(__patternTAB__, _file).group(0)):
                 # turn TV into 3D Mode
-                for keycode in __mode3D_on__[self.lg_protocol]: self.sendCommand(keycode)
-                self.isPlaying3D = True
+                if self.lg_protocol:
+                    for keycode in __mode3D_on__[self.lg_protocol]: self.sendCommand(keycode)
+                    self.isPlaying3D = True
             else:
                 if self.isPlaying3D:
                     # turn TV into normal Mode
-                    for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
-                    self.isPlaying3D = False
+                    if self.lg_protocol:
+                        for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
+                        self.isPlaying3D = False
 
     def onPlayBackStopped(self):
         if self.isPlaying3D:
             # turn TV into normal Mode
-            for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
-            self.isPlaying3D = False
+            if self.lg_protocol:
+                for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
+                self.isPlaying3D = False
 
     def onPlayBackEnded(self):
         if self.isPlaying3D:
             # turn TV into normal Mode
-            for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
-            self.isPlaying3D = False
+            if self.lg_protocol:
+                for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
+                self.isPlaying3D = False
 
 try:
     if sys.argv[1] == 'scan':
         notifyLog("Scanning for LG Smart TV Devices...")
 
-        _host = None if __addon__.getSetting('lg_host').lower() == 'scan' else __addon__.getSetting('lg_host')
+        _host = None if __addon__.getSetting('lg_host') == '' else __addon__.getSetting('lg_host')
         Remote = interface.Interface(host=_host, port=8080, protocol=None)
         _host = Remote.host
-        _protocol = Remote.protocol
+        _protocol = Remote._protocol
         notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()))
         #
         # input pairing key:
@@ -114,7 +118,7 @@ try:
             if _conn:
                 notifyLog('Session with ID %s established' % (Remote.session_id))
                 # we are ready
-                notifyOSD(__LS__(30021) % (_host), __LS__(30022))
+                dialogOSD(__LS__(30021) % (_host, _protocol))
                 __addon__.setSetting('lg_host', _host)
                 __addon__.setSetting('lg_protocol', _protocol.upper())
                 __addon__.setSetting('lg_pairing_key', _pairing_key)
@@ -136,7 +140,8 @@ except IndexError:
     Service = service()
     notifyLog('Service established')
 
-    while not xbmc.abortRequested:
+    while not xbmc.abortRequested or not Service.Monitor.waitForAbort():
         xbmc.sleep(500)
+        if xbmc.abortRequested or Service.Monitor.abortRequested(): break
 
     notifyLog('Service finished')

@@ -14,8 +14,7 @@
     <string id="30019">Tastencode-Sequenz</string>
     <!-- defined actions -->
     <string id="30020">Pairing Schlüssel des TV Gerätes eingeben</string>
-    <string id="30021">Pairing auf %s erfolgreich</string>
-    <string id="30022">Verbindung mit LG Smart TV hergestellt</string>
+    <string id="30021">LG Smart TV auf IP %s über %s erfolgreich gepairt. Alle Parameter werden gespeichert. Bitte das Addon-Setup verlassen.</string>
     <!-- exceptions -->
     <string id="30050">Kein LG Smart TV Gerät im Netzwerk gefunden. Überprüfe, ob dieses eingeschalten ist, starte den Scan erneut oder gebe die IP Deines Gerätes ein.</string>
     <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll aufgetreten ist.</string>
