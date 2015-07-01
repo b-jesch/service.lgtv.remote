@@ -34,9 +34,9 @@ class Interface(object):
         self.host = host
         if host == None: self.host = self.getip()
 
-        self.protocol = protocol
+        self._protocol = protocol
         if protocol == None:
-            self.protocol = self.auto_detect_accepted_protocol()
+            self._protocol = self.auto_detect_accepted_protocol()
 
         self._pairing_key = None
         self.session_id = None
@@ -111,17 +111,20 @@ class Interface(object):
         logging.debug("Trying paring key: %s" % (self._pairing_key))
         pair_cmd_xml_string = self._xml_version_string + '<auth><type>AuthReq</type><value>' + \
             self._pairing_key + '</value></auth>'
-        conn = httplib.HTTPConnection(self.host, port=self.port)
-        conn.request('POST', '/%s/api/auth' % (self._protocol), pair_cmd_xml_string, headers=self._headers)
-        http_response = conn.getresponse()
-        if http_response.reason != 'OK': return False
+        try:
+            conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
+            conn.request('POST', '/%s/api/auth' % (self._protocol), pair_cmd_xml_string, headers=self._headers)
+            http_response = conn.getresponse()
+            if http_response.reason != 'OK': return False
 
-        tree = etree.XML(http_response.read())
-        self.session_id = tree.find('session').text
-        logging.debug("Session ID is %s" % (self.session_id))
-        if len(self.session_id) < 8: return False
+            tree = etree.XML(http_response.read())
+            self.session_id = tree.find('session').text
+            logging.debug("Session ID is %s" % (self.session_id))
+            if len(self.session_id) < 8: return False
 
-        return self.session_id
+            return self.session_id
+        except socket.timeout:
+            raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
 
     def handle_key_input(self, cmdcode):
         highest_key_input = self._highest_key_input_for_protocol[self._protocol]
@@ -142,7 +145,7 @@ class Interface(object):
             + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
         conn = httplib.HTTPConnection(self.host, port=self.port)
         conn.request('POST', command_url_for_protocol[self._protocol], key_input_xml_string, headers=self._headers)
-        return conn.getresponse()
+        return conn.getresponse().reason
 
     def _doesServiceExist(self, port):
         try:

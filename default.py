@@ -12,10 +12,9 @@ __pattern3D__ =   '[-. _]3d[-. _]'
 __patternSBS__ =  '[-. _]h?sbs[-. _]'
 __patternTAB__ =  '[-. _]h?tab[-. _]'
 
-# Key sequences
-
-__mode3D_on__ =     ['400', '20']
-__mode3D_off__ =    ['400']
+# Key sequences ROAP/HDCP
+__mode3D_on__ =     {'roap': ['400', '20'], 'hdcp': ['220', '68']}
+__mode3D_off__ =    {'roap': ['400'], 'hdcp': ['220']}
 
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('name')
@@ -52,40 +51,40 @@ class service(xbmc.Player):
 
         self.isPlaying3D = None
 
-        Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
+        if self.lg_host is not None: self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
         xbmc.Player.__init__(self)
 
     def sendCommand(self, code):
-        Remote.handle_key_input(code)
-        xbmc.sleep(500)
+        try:
+            if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
+            notifyLog('Sending keycode %s. Response: %s' % (code, self.Remote.handle_key_input(code)))
+            xbmc.sleep(500)
+        except self.Remote.NoConnectionToHostException:
+            notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
 
     def onPlayBackStarted(self):
         if self.isPlayingVideo():
             _file = self.getPlayingFile()
             if re.search(__pattern3D__, _file).group(0) and (re.search(__patternSBS__, _file).group(0) or re.search(__patternTAB__, _file).group(0)):
                 # turn TV into 3D Mode
-                Remote.get_session_id(self.lg_pairing_key)
-                for keycode in __mode3D_on__: self.sendCommand(keycode)
+                for keycode in __mode3D_on__[self.lg_protocol]: self.sendCommand(keycode)
                 self.isPlaying3D = True
             else:
                 if self.isPlaying3D:
                     # turn TV into normal Mode
-                    Remote.get_session_id(self.lg_pairing_key)
-                    for keycode in __mode3D_off__: self.sendCommand(keycode)
+                    for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
                     self.isPlaying3D = False
 
     def onPlayBackStopped(self):
         if self.isPlaying3D:
             # turn TV into normal Mode
-            Remote.get_session_id(self.lg_pairing_key)
-            for keycode in __mode3D_off__: self.sendCommand(keycode)
+            for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
             self.isPlaying3D = False
 
     def onPlayBackEnded(self):
         if self.isPlaying3D:
             # turn TV into normal Mode
-            Remote.get_session_id(self.lg_pairing_key)
-            for keycode in __mode3D_off__: self.sendCommand(keycode)
+            for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
             self.isPlaying3D = False
 
 try:
@@ -127,5 +126,7 @@ except interface.Interface.NoConnectionToHostException:
     dialogOSD(__LS__(30053) % (_host))
 except IndexError:
     Service = service()
-    while not xbmc.abortRequested or Monitor.abortRequested():
+    notifyLog('Service established')
+    while not xbmc.abortRequested or Monitor.onAbortRequested():
         xbmc.sleep(500)
+    notifyLog('Service finished')

@@ -5,8 +5,8 @@
        provider-name="Birger Jesch">
   <extension point="xbmc.service"
         library="default.py" start="login" />
-  <!-- <extension point="xbmc.python.script"
-	    library="default.py" /> -->
+  <extension point="xbmc.python.script"
+	    library="default.py" />
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary lang="en">LG Smart TV 3D Switch - for both 2011 and 2012 series</summary>
