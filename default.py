@@ -13,8 +13,8 @@ __patternSBS__ =  '[-. _]h?sbs[-. _]'
 __patternTAB__ =  '[-. _]h?tab[-. _]'
 
 # Key sequences ROAP/HDCP
-__mode3D_on__ =     {'roap': ['400', '20'], 'hdcp': ['220', '68']}
-__mode3D_off__ =    {'roap': ['400'], 'hdcp': ['220']}
+__mode3D_on__ =     {'roap': ['400', '20'], 'hdcp': ['220', '68', '68', '68']}
+__mode3D_off__ =    {'roap': ['400'], 'hdcp': ['220', '68']}
 
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('name')
@@ -27,7 +27,6 @@ __IconConnected__ = xbmc.translatePath(os.path.join( __path__,'resources', 'medi
 __IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'error.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
 
-Monitor = xbmc.Monitor()
 OSD = xbmcgui.Dialog()
 
 def notifyOSD(header, message, icon=__IconDefault__):
@@ -42,6 +41,13 @@ def notifyLog(message, level=xbmc.LOGNOTICE):
 class service(xbmc.Player):
 
     def __init__(self):
+
+        xbmc.Player.__init__(self)
+        self.Remote = None
+
+        self.getSettings()
+
+    def getSettings(self):
         self.lg_host = __addon__.getSetting('lg_host')
         self.lg_host = None if self.lg_host == 'scan...' else self.lg_host
         self.lg_port = __addon__.getSetting('lg_port')
@@ -52,9 +58,11 @@ class service(xbmc.Player):
         self.isPlaying3D = None
 
         if self.lg_host is not None: self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
-        xbmc.Player.__init__(self)
 
     def sendCommand(self, code):
+        if self.Remote is None:
+            self.getSettings()
+            if self.Remote is None: return False
         try:
             if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
             notifyLog('Sending keycode %s. Response: %s' % (code, self.Remote.handle_key_input(code)))
@@ -127,6 +135,8 @@ except interface.Interface.NoConnectionToHostException:
 except IndexError:
     Service = service()
     notifyLog('Service established')
-    while not xbmc.abortRequested or Monitor.onAbortRequested():
+
+    while not xbmc.abortRequested:
         xbmc.sleep(500)
+
     notifyLog('Service finished')
