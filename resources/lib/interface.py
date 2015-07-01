@@ -17,7 +17,7 @@ import httplib
 class KeyInputError(Exception):
     pass
 
-class LGRemote(object):
+class Interface(object):
 
     _xml_version_string = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
@@ -159,12 +159,6 @@ def main():
 
     """Execute module in command line mode."""
 
-    def get_pairing_key_from_user(lg_remote):
-        lg_remote.display_key_on_screen()
-        ####
-        session_id=KEY_PAIRING
-        return session_id
-
     args = ArgumentParser(
         description="Control your Smart Lg TV with your PC",
     )
@@ -214,7 +208,7 @@ def main():
     logging.basicConfig(format='# %(levelname)s: %(message)s', level=logging.DEBUG)
 
     try:
-        lg_remote = LGRemote(
+        lg_remote = Interface(
             host=None if user_parms.host == 'scan' else user_parms.host,
             port=user_parms.port,
             protocol=user_parms.protocol)
@@ -253,4 +247,4 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
     try:
         main()
-    except LGRemote.LGinNetworkNotFoundException: print 'No LG TV found'
+    except Interface.LGinNetworkNotFoundException: print 'No LG TV found'
