@@ -13,7 +13,7 @@ __patternSBS__ =  '[-. _]h?sbs[-. _]'
 __patternTAB__ =  '[-. _]h?tab[-. _]'
 
 # Key sequences ROAP/HDCP
-__mode3D_on__ =     {'roap': ['401', '20'], 'hdcp': ['220', '68', '68', '68']}
+__mode3D_on__ =     {'roap': ['400', '20'], 'hdcp': ['220', '68', '68', '68']}
 __mode3D_off__ =    {'roap': ['400'], 'hdcp': ['220', '68']}
 
 __addon__ = xbmcaddon.Addon()
@@ -36,7 +36,7 @@ def dialogOSD(message, header=__addonname__):
     OSD.ok(header.encode('utf-8'), message.encode('utf-8'))
 
 def dialogYesNo(message, header=__addonname__):
-    return OSD.yesno((header.encode('utf-8'), message.encode('utf-8'))
+    return OSD.yesno(header.encode('utf-8'), message.encode('utf-8'))
 
 def notifyLog(message, level=xbmc.LOGNOTICE):
     xbmc.log('[%s] %s' % (__addonID__, message.encode('utf-8')), level)
@@ -129,7 +129,7 @@ try:
             __addon__.setSetting('lg_host', _host)
             __addon__.setSetting('lg_protocol', _protocol.upper())
             __addon__.setSetting('lg_pairing_key', _pairing_key)
-            if dialogYesNo(__LS__(30021) % (_host, _protocol.upper())): xbmc.executebuiltin(RestartApp())
+            if dialogYesNo(__LS__(30021) % (_host, _protocol.upper())): xbmc.executebuiltin('RestartApp')
         else:
             notifyLog('Session not established. Try again.', xbmc.LOGERROR)
             dialogOSD(__LS__(30022))
