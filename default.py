@@ -110,20 +110,25 @@ try:
         _protocol = Remote._protocol
         notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()))
         #
-        # input pairing key:
-        kb = xbmc.Keyboard('', __LS__(30020))
-        kb.doModal()
-        if kb.isConfirmed() and kb.getText() != '':
-            _pairing_key = kb.getText()
-            _conn = Remote.get_session_id(_pairing_key)
-            if _conn:
-                notifyLog('Session with ID %s established' % (Remote.session_id))
-                # we are ready
-                dialogOSD(__LS__(30021) % (_host, _protocol))
-                __addon__.setSetting('lg_host', _host)
-                __addon__.setSetting('lg_protocol', _protocol.upper())
-                __addon__.setSetting('lg_pairing_key', _pairing_key)
+        # input pairing key if not exists
+        #
+        _pairing_key = None if __addon__.getSetting('lg_pairing_key') == '' else __addon__.getSetting('lg_pairing_key')
+        if _pairing_key is None:
+            kb = xbmc.Keyboard('', __LS__(30020))
+            kb.doModal()
+            if kb.isConfirmed() and kb.getText() != '':  _pairing_key = kb.getText()
 
+        _conn = Remote.get_session_id(_pairing_key)
+        if _conn:
+            notifyLog('Session with ID %s established' % (Remote.session_id))
+            # we are ready
+            dialogOSD(__LS__(30021) % (_host, _protocol))
+            __addon__.setSetting('lg_host', _host)
+            __addon__.setSetting('lg_protocol', _protocol.upper())
+            __addon__.setSetting('lg_pairing_key', _pairing_key)
+        else:
+            notifylog('Session not established. Try again.', xbmc.LOGERROR)
+            dialogOSD(__LS__(30022))
 
 except interface.Interface.LGinNetworkNotFoundException:
     notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)

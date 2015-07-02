@@ -14,7 +14,8 @@
     <string id="30019">Tastencode-Sequenz</string>
     <!-- defined actions -->
     <string id="30020">Pairing Schlüssel des TV Gerätes eingeben</string>
-    <string id="30021">LG Smart TV auf IP %s über %s erfolgreich gepairt. Alle Parameter werden gespeichert. Bitte das Addon-Setup verlassen.</string>
+    <string id="30021">LG Smart TV auf IP %s über %s erfolgreich gepairt. Alle Parameter wurden gespeichert. Bitte Kodi neu starten.</string>
+    <string id="30022">Es konnte keine Session zum Smart TV aufgebaut werden. Eventuell muss Kodi neu gestartet werden.</string>
     <!-- exceptions -->
     <string id="30050">Kein LG Smart TV Gerät im Netzwerk gefunden. Überprüfe, ob dieses eingeschalten ist, starte den Scan erneut oder gebe die IP Deines Gerätes ein.</string>
     <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll aufgetreten ist.</string>

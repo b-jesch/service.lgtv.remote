@@ -14,7 +14,8 @@
     <string id="30019">Key code sequence</string>
     <!-- defined actions -->
     <string id="30020">Type in pairing key of TV device</string>
-    <string id="30021">Pairing with LG Smart TV on IP %s and %s successful. All parameters stored. Please exit setup.</string>
+    <string id="30021">Pairing with LG Smart TV on IP %s and %s successful. All parameters stored. Please restart Kodi.</string>
+    <string id="30022">Session not established. Possibly Kodi must be restarted.</string>
     <!-- exceptions -->
     <string id="30050">There wasn't found any LG Smart Devices on your network. Be sure your devices are turned on or enter IP of LG Smart TV manually.</string>
     <string id="30051">There seems to be an issue with the used device protocol. Device can't be paired.</string>
