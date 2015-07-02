@@ -1,2 +1,5 @@
+[B][/B]
+  - Improved setup handling
+
 [B]0.0.1[/B]
   - Initial version

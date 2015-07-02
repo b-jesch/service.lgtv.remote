@@ -35,6 +35,9 @@ def notifyOSD(header, message, icon=__IconDefault__):
 def dialogOSD(message, header=__addonname__):
     OSD.ok(header.encode('utf-8'), message.encode('utf-8'))
 
+def dialogYesNo(message, header=__addonname__):
+    return OSD.yesno((header.encode('utf-8'), message.encode('utf-8'))
+
 def notifyLog(message, level=xbmc.LOGNOTICE):
     xbmc.log('[%s] %s' % (__addonID__, message.encode('utf-8')), level)
 
@@ -122,10 +125,11 @@ try:
         if _conn:
             notifyLog('Session with ID %s established' % (Remote.session_id))
             # we are ready
-            dialogOSD(__LS__(30021) % (_host, _protocol))
+
             __addon__.setSetting('lg_host', _host)
             __addon__.setSetting('lg_protocol', _protocol.upper())
             __addon__.setSetting('lg_pairing_key', _pairing_key)
+            if dialogYesNo(__LS__(30021) % (_host, _protocol.upper())): xbmc.executebuiltin(RestartApp())
         else:
             notifyLog('Session not established. Try again.', xbmc.LOGERROR)
             dialogOSD(__LS__(30022))
