@@ -127,7 +127,7 @@ try:
             __addon__.setSetting('lg_protocol', _protocol.upper())
             __addon__.setSetting('lg_pairing_key', _pairing_key)
         else:
-            notifylog('Session not established. Try again.', xbmc.LOGERROR)
+            notifyLog('Session not established. Try again.', xbmc.LOGERROR)
             dialogOSD(__LS__(30022))
 
 except interface.Interface.LGinNetworkNotFoundException:
