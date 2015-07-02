@@ -2,33 +2,70 @@
 # If you find more codes feel free to submit these to https://github.com/b-jesch/service.lgtv.remote
 # or mailto birger.jesch@gmail.com
 
-KEY_IDX_3D=400
-KEY_IDX_ARROW_DOWN=2
-KEY_IDX_ARROW_LEFT=3
-KEY_IDX_ARROW_RIGHT=4
-KEY_IDX_ARROW_UP=1
-KEY_IDX_BACK=23
-KEY_IDX_BLUE=29
-KEY_IDX_BTN_1=5
-KEY_IDX_BTN_2=6
-KEY_IDX_BTN_3=7
-KEY_IDX_BTN_4=8
-KEY_IDX_CH_DOWN=28
-KEY_IDX_CH_UP=27
-KEY_IDX_ENTER=20
-KEY_IDX_EXIT=412
-KEY_IDX_EXTERNAL_INPUT=47
-KEY_IDX_GREEN=30
-KEY_IDX_HOME=21
-KEY_IDX_MUTE=26
-KEY_IDX_MYAPPS=417
-KEY_IDX_NETCAST=408
-KEY_IDX_PAUSE=34
-KEY_IDX_PLAY=33
-KEY_IDX_POWER_OFF=1
-KEY_IDX_PREV_CHANNEL=403
-KEY_IDX_RED=31
-KEY_IDX_STOP=35
-KEY_IDX_VOL_DOWN=25
-KEY_IDX_VOL_UP=24
-KEY_IDX_YELLOW=32
+1   POWER
+2   Number 0
+3   Number 1
+4   Number 2
+5   Number 3
+6   Number 4
+7   Number 5
+8   Number 6
+9   Number 7
+10  Number 8
+11  Number 9
+12  UP key among remote Controller’s 4 direction keys
+13  DOWN key among remote Controller’s 4 direction keys
+14  LEFT key among remote Controller’s 4 direction keys
+15  RIGHT key among remote Controller’s 4 direction keys
+20  OK
+21  Home menu
+22  Menu key (same with Home menu key)
+23  Previous key (Back)
+24  Volume up
+25  Volume down
+26  Mute (toggle)
+27  Channel UP (+)
+28  Channel DOWN (-)
+29  Blue key of data broadcast
+30  Green key of data broadcast
+31  Red key of data broadcast
+32  Yellow key of data broadcast
+33  Play
+34  Pause
+35  Stop
+36  Fast forward (FF)
+37  Rewind (REW)
+38  Skip Forward
+39  Skip Backward
+40  Record
+41  Recording list
+42  Repeat
+43  Live TV
+44  EPG
+45  Current program information
+46  Aspect ratio
+47  External input
+48  PIP secondary video
+49  Show / Change subtitle
+50  Program list
+51  Tele Text
+52  Mark
+
+400 3D Video
+401 3D L/R
+402 Dash (-)
+403 Previous channel (Flash back)
+404 Favorite channel
+405 Quick menu
+406 Text Option
+407 Audio Description
+408 NetCast key (same with Home menu)
+409 Energy saving
+410 A/V mode
+411 SIMPLINK
+412 Exit
+413 Reservation programs list
+414 PIP channel UP
+415 PIP channel DOWN
+416 Switching between primary/secondary video
+417 My Apps
