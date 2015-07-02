@@ -13,7 +13,7 @@ __patternSBS__ =  '[-. _]h?sbs[-. _]'
 __patternTAB__ =  '[-. _]h?tab[-. _]'
 
 # Key sequences ROAP/HDCP
-__mode3D_on__ =     {'roap': ['400', '20'], 'hdcp': ['220', '68', '68', '68']}
+__mode3D_on__ =     {'roap': ['401', '20'], 'hdcp': ['220', '68', '68', '68']}
 __mode3D_off__ =    {'roap': ['400'], 'hdcp': ['220', '68']}
 
 __addon__ = xbmcaddon.Addon()
