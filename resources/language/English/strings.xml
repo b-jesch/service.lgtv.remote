@@ -10,12 +10,21 @@
     <string id="30015">ROAP</string>
     <string id="30016">HDCP</string>
     <string id="30017">auto detect</string>
-    <string id="30018">Use own key code sequence</string>
-    <string id="30019">Key code sequence</string>
+    <string id="30018">extended Settings</string>
+    <string id="30019">Key Code Sequence Delay</string>
+    <string id="30020">Use own Key Code Sequences</string>
+    <string id="30021">Key Code sequence 3D on</string>
+    <string id="30022">Key Code sequence 3D off</string>
+    <!-- delay -->
+    <string id="30025">500 msec</string>
+    <string id="30026">750 msec</string>
+    <string id="30027">1000 msec</string>
+    <string id="30028">1250 msec</string>
+    <string id="30029">1500 msec</string>
     <!-- defined actions -->
-    <string id="30020">Type in pairing key of TV device</string>
-    <string id="30021">Pairing with LG Smart TV on IP %s and %s successful. Kodi must be restarted. Would you like to restart Kodi now?</string>
-    <string id="30022">Session not established. Possibly Kodi must be restarted.</string>
+    <string id="30030">Type in pairing key of TV device</string>
+    <string id="30031">Pairing with LG Smart TV on IP %s and %s successful. Kodi must be restarted. Would you like to restart Kodi now?</string>
+    <string id="30032">Session not established. Possibly Kodi must be restarted.</string>
     <!-- exceptions -->
     <string id="30050">There wasn't found any LG Smart Devices on your network. Be sure your devices are turned on or enter IP of LG Smart TV manually.</string>
     <string id="30051">There seems to be an issue with the used device protocol. Device can't be paired.</string>

@@ -48,7 +48,6 @@ class service(xbmc.Player):
         xbmc.Player.__init__(self)
         self.Monitor = xbmc.Monitor()
         self.Remote = None
-
         self.getSettings()
 
     def getSettings(self):
@@ -63,45 +62,48 @@ class service(xbmc.Player):
 
         if self.lg_host is not None: self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
 
-    def sendCommand(self, code):
-        if self.lg_host is None: self.getSettings()
-        if self.Remote is None: return False
+        self.lg_key_delay = int(re.match('\d+', __addon__.getSetting('lg_delay')).group())
+        self.lg_own_seqs_enabled = True if __addon__.getSetting('use_own_seq').upper() == 'TRUE' else False
+        self.lg_seq_3D_on = ' '.join(__addon__.getSetting('lg_3D_on').replace(',',' ').split()).split()
+        self.lg_seq_3D_off = ' '.join(__addon__.getSetting('lg_3D_off').replace(',',' ').split()).split()
+
+    def sendCommand(self, sequence, own_sequence):
         try:
-            if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
-            notifyLog('Sending keycode %s. Response: %s' % (code, self.Remote.handle_key_input(code)))
-            # let smart models time for response ;)
-            xbmc.sleep(500)
+            self.getSettings()
+            if self.lg_own_seqs_enabled:
+                sequence = own_sequence
+                notifyLog('Sending user sequence %s' % (sequence))
+
+            for code in sequence:
+                if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
+                notifyLog('Sending keycode %s. Response: %s. Wait %s msec' % (code, self.Remote.handle_key_input(code), self.lg_key_delay))
+                # let smart models time for response ;)
+                xbmc.sleep(self.lg_key_delay)
+
         except self.Remote.NoConnectionToHostException:
             notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
 
     def onPlayBackStarted(self):
-        if self.isPlayingVideo():
+        if self.isPlayingVideo() and self.lg_protocol is not None:
             _file = self.getPlayingFile()
             if re.search(__pattern3D__, _file).group(0) and (re.search(__patternSBS__, _file).group(0) or re.search(__patternTAB__, _file).group(0)):
-                # turn TV into 3D Mode
-                if self.lg_protocol:
-                    for keycode in __mode3D_on__[self.lg_protocol]: self.sendCommand(keycode)
-                    self.isPlaying3D = True
+                notifyLog('Suggest that %s is a 3D movie.' % (_file))
+                self.sendCommand(__mode3D_on__[self.lg_protocol], self.lg_seq_3D_on)
+                self.isPlaying3D = True
             else:
                 if self.isPlaying3D:
-                    # turn TV into normal Mode
-                    if self.lg_protocol:
-                        for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
-                        self.isPlaying3D = False
+                    self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
+                    self.isPlaying3D = False
 
     def onPlayBackStopped(self):
         if self.isPlaying3D:
-            # turn TV into normal Mode
-            if self.lg_protocol:
-                for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
-                self.isPlaying3D = False
+            self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
+            self.isPlaying3D = False
 
     def onPlayBackEnded(self):
         if self.isPlaying3D:
-            # turn TV into normal Mode
-            if self.lg_protocol:
-                for keycode in __mode3D_off__[self.lg_protocol]: self.sendCommand(keycode)
-                self.isPlaying3D = False
+            self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
+            self.isPlaying3D = False
 
 try:
     if sys.argv[1] == 'scan':
@@ -117,7 +119,7 @@ try:
         #
         _pairing_key = None if __addon__.getSetting('lg_pairing_key') == '' else __addon__.getSetting('lg_pairing_key')
         if _pairing_key is None:
-            kb = xbmc.Keyboard('', __LS__(30020))
+            kb = xbmc.Keyboard('', __LS__(30030))
             kb.doModal()
             if kb.isConfirmed() and kb.getText() != '':  _pairing_key = kb.getText()
 
@@ -129,10 +131,10 @@ try:
             __addon__.setSetting('lg_host', _host)
             __addon__.setSetting('lg_protocol', _protocol.upper())
             __addon__.setSetting('lg_pairing_key', _pairing_key)
-            if dialogYesNo(__LS__(30021) % (_host, _protocol.upper())): xbmc.executebuiltin('RestartApp')
+            if dialogYesNo(__LS__(30031) % (_host, _protocol.upper())): xbmc.executebuiltin('RestartApp')
         else:
             notifyLog('Session not established. Try again.', xbmc.LOGERROR)
-            dialogOSD(__LS__(30022))
+            dialogOSD(__LS__(30032))
 
 except interface.Interface.LGinNetworkNotFoundException:
     notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)

@@ -1,4 +1,10 @@
-[B][/B]
+[B]0.1.0[/B]
+  - Second release
+  - Some new extended settings:
+    - user defined key codes
+    - key delay
+
+[B]0.0.2[/B]
   - Improved setup handling
 
 [B]0.0.1[/B]

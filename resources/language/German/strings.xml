@@ -10,12 +10,20 @@
     <string id="30015">ROAP</string>
     <string id="30016">HDCP</string>
     <string id="30017">automatische Suche</string>
-    <string id="30018">Eigene Tastencode-Sequenz verwenden</string>
-    <string id="30019">Tastencode-Sequenz</string>
-    <!-- defined actions -->
-    <string id="30020">Pairing Schlüssel des TV Gerätes eingeben</string>
-    <string id="30021">LG Smart TV auf IP %s über %s erfolgreich gepairt. Kodi muss neu gestartet werden. Möchtest Du Kodi jetzt neu starten?</string>
-    <string id="30022">Es konnte keine Session zum Smart TV aufgebaut werden. Eventuell muss Kodi neu gestartet werden.</string>
+    <string id="30018">Erweiterte Einstellungen</string>
+    <string id="30019">Tastencode Verzögerung</string>
+    <string id="30020">Eigene Tastencodes verwenden</string>
+    <string id="30021">Code Sequenz 3D ein</string>
+    <string id="30022">Code Sequenz 3D aus</string>
+    <!-- delay -->
+    <string id="30025">500 msec</string>
+    <string id="30026">750 msec</string>
+    <string id="30027">1000 msec</string>
+    <string id="30028">1250 msec</string>
+    <string id="30029">1500 msec</string>    <!-- defined actions -->
+    <string id="30030">Pairing Schlüssel des TV Gerätes eingeben</string>
+    <string id="30031">LG Smart TV auf IP %s über %s erfolgreich gepairt. Kodi muss neu gestartet werden. Möchtest Du Kodi jetzt neu starten?</string>
+    <string id="30032">Es konnte keine Session zum Smart TV aufgebaut werden. Eventuell muss Kodi neu gestartet werden.</string>
     <!-- exceptions -->
     <string id="30050">Kein LG Smart TV Gerät im Netzwerk gefunden. Überprüfe, ob dieses eingeschalten ist, starte den Scan erneut oder gebe die IP Deines Gerätes ein.</string>
     <string id="30051">Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll aufgetreten ist.</string>
