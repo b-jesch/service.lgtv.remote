@@ -23,8 +23,8 @@ __path__ = __addon__.getAddonInfo('path')
 __version__ = __addon__.getAddonInfo('version')
 __LS__ = __addon__.getLocalizedString
 
-__IconConnected__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'connect.png'))
-__IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'error.png'))
+__IconConnected__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'ok.png'))
+__IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'fail.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
 
 OSD = xbmcgui.Dialog()
@@ -85,8 +85,8 @@ class service(xbmc.Player):
 
     def onPlayBackStarted(self):
         if self.isPlayingVideo() and self.lg_protocol is not None:
-            _file = self.getPlayingFile()
-            if re.search(__pattern3D__, _file).group(0) and (re.search(__patternSBS__, _file).group(0) or re.search(__patternTAB__, _file).group(0)):
+            _file = self.getPlayingFile().decode('utf-8')
+            if re.search(__pattern3D__, _file) and (re.search(__patternSBS__, _file) or re.search(__patternTAB__, _file)):
                 notifyLog('Suggest that %s is a 3D movie.' % (_file))
                 self.sendCommand(__mode3D_on__[self.lg_protocol], self.lg_seq_3D_on)
                 self.isPlaying3D = True
