@@ -2,6 +2,8 @@
 # If you find more codes feel free to submit these to https://github.com/b-jesch/service.lgtv.remote
 # or mailto birger.jesch@gmail.com
 
+Protocol ROAP (model series > 2012) decimal codes:
+
 1   POWER
 2   Number 0
 3   Number 1
@@ -69,3 +71,72 @@
 415 PIP channel DOWN
 416 Switching between primary/secondary video
 417 My Apps
+
+Protocol HDCP (model series 2011) hex codes:
+
+POWER      - 0x08
+
+Energy    - 0x95
+AV        - 0x30
+INPUT     - 0x0B
+TV/RAD    - 0xF0
+
+0         - 0x10
+1         - 0x11
+2         - 0x12
+3         - 0x13
+4         - 0x14
+5         - 0x15
+6         - 0x16
+7         - 0x17
+8         - 0x18
+9         - 0x19
+
+LIST      - 0x53
+Q.VIEW    - 0x1A
+VOL+      - 0x02
+VOL-      - 0x03
+FAV       - 0x1E
+RATIO     - 0x79
+MUTE      - 0x09
+CH+       - 0x00
+CH-       - 0x01
+
+MENU/HOME - 0x43 / 0x23 (keep pressed 5sec)
+WIDGETS   - 0x58 (only US models)
+NETCAST   - 0x59
+Q.MENU    - 0x45
+3D        - 0xDC
+
+RIGHT     - 0x06
+LEFT      - 0x07
+UP        - 0x40
+DOWN      - 0x41
+
+OK        - 0x44
+
+BACK      - 0x28
+GUIDE     - 0xA9
+EXIT      - 0x5B
+
+RED       - 0x72
+GREEN     - 0x71
+YELLOW    - 0x63
+BLUE      - 0x61
+3D setup  - 0x61
+
+TEXT      - 0x20
+T.OPT     - 0x21
+SUBTIT    - 0x39
+
+LIVE TV   - 0x9E  (for DVR to return to live feed if paused or re-winded)
+REC       - 0xBD  (only on DVR models)
+STOP      - 0xB1
+PLAY      - 0xB0
+PAUSE     - 0xBA
+<<        - 0x8F
+>>        - 0x8E
+SIMPLNK   - 0x7E
+INFO      - 0xAA
+AD        - 0x91
+APP       - 0x9F

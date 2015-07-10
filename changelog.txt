@@ -1,3 +1,6 @@
+[B]0.1.2[/B]
+- Default code sequences redefined
+
 [B]0.1.0[/B]
   - Second release
   - Some new extended settings:
