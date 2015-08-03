@@ -1,11 +1,15 @@
+[B]0.1.3[/B]
+- Key delay redefined
+- improved communication handling
+
 [B]0.1.2[/B]
 - Default code sequences redefined
 
 [B]0.1.0[/B]
   - Second release
-  - Some new extended settings:
-    - user defined key codes
-    - key delay
+  - extended settings
+  - user defined key codes
+  - adjustable key delay
 
 [B]0.0.2[/B]
   - Improved setup handling

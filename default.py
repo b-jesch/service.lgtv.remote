@@ -82,9 +82,10 @@ class service(xbmc.Player):
 
             for code in sequence:
                 if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
-                notifyLog('Sending keycode %s. Response: %s. Wait %s msec' % (code, self.Remote.handle_key_input(code), self.lg_key_delay))
+                notifyLog('Wait %s msec.' % (self.lg_key_delay))
                 # let smart models time for response ;)
                 xbmc.sleep(self.lg_key_delay)
+                notifyLog('Sending keycode %s. Response: %s.' % (code, self.Remote.handle_key_input(code)))
 
         except self.Remote.NoConnectionToHostException:
             notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)

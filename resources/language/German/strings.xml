@@ -16,12 +16,13 @@
     <string id="30021">Code Sequenz 3D ein</string>
     <string id="30022">Code Sequenz 3D aus</string>
     <!-- delay -->
-    <string id="30024">250 msec</string>
-    <string id="30025">500 msec</string>
-    <string id="30026">750 msec</string>
-    <string id="30027">1000 msec</string>
-    <string id="30028">1250 msec</string>
-    <string id="30029">1500 msec</string>    <!-- defined actions -->
+    <string id="30024">500 msec</string>
+    <string id="30025">1000 msec</string>
+    <string id="30026">1500 msec</string>
+    <string id="30027">2000 msec</string>
+    <string id="30028">2500 msec</string>
+    <string id="30029">3000 msec</string>
+    <!-- defined actions -->
     <string id="30030">Pairing Schlüssel des TV Gerätes eingeben</string>
     <string id="30031">LG Smart TV auf IP %s über %s erfolgreich gepairt. Kodi muss neu gestartet werden. Möchtest Du Kodi jetzt neu starten?</string>
     <string id="30032">Es konnte keine Session zum Smart TV aufgebaut werden. Eventuell muss Kodi neu gestartet werden.</string>

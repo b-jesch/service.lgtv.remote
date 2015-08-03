@@ -16,12 +16,12 @@
     <string id="30021">Key Code sequence 3D on</string>
     <string id="30022">Key Code sequence 3D off</string>
     <!-- delay -->
-    <string id="30024">250 msec</string>
-    <string id="30025">500 msec</string>
-    <string id="30026">750 msec</string>
-    <string id="30027">1000 msec</string>
-    <string id="30028">1250 msec</string>
-    <string id="30029">1500 msec</string>
+    <string id="30024">500 msec</string>
+    <string id="30025">1000 msec</string>
+    <string id="30026">1500 msec</string>
+    <string id="30027">2000 msec</string>
+    <string id="30028">2500 msec</string>
+    <string id="30029">3000 msec</string>
     <!-- defined actions -->
     <string id="30030">Type in pairing key of TV device</string>
     <string id="30031">Pairing with LG Smart TV on IP %s and %s successful. Kodi must be restarted. Would you like to restart Kodi now?</string>
