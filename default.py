@@ -66,8 +66,16 @@ class service(xbmc.Player):
         self.lg_protocol = None if self.lg_protocol == __LS__(30017) else self.lg_protocol.lower()
         self.lg_pairing_key = __addon__.getSetting('lg_pairing_key')
 
-        if self.lg_host is not None: self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
-        if not self.Remote.session_id: self.Remote.get_session_id(self.lg_pairing_key)
+        if self.lg_host is not None:
+            if self.Remote is None:
+                try:
+                    self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
+                    if not self.Remote.session_id:
+                        self.Remote.get_session_id(self.lg_pairing_key)
+                        notifyLog('Session established. Using session id %s.' % (self.Remote.session_id))
+                except self.Remote.NoConnectionToHostException:
+                    notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
+                    notifyOSD(__LS__(30054), icon=__IconError__)
 
         self.lg_key_delay = int(re.match('\d+', __addon__.getSetting('lg_delay')).group())
         self.lg_own_seqs_enabled = True if __addon__.getSetting('use_own_seq').upper() == 'TRUE' else False
@@ -190,7 +198,7 @@ except interface.Interface.NoConnectionToHostException:
     dialogOSD(__LS__(30053) % (_host))
 except IndexError:
     Service = service()
-    notifyLog('Service established')
+    notifyLog('Service running')
 
     while not xbmc.abortRequested or not Service.Monitor.waitForAbort():
         xbmc.sleep(500)
