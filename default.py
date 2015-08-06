@@ -67,6 +67,7 @@ class service(xbmc.Player):
         self.lg_pairing_key = __addon__.getSetting('lg_pairing_key')
 
         if self.lg_host is not None: self.Remote = interface.Interface(self.lg_host, self.lg_port, self.lg_protocol)
+        if not self.Remote.session_id: self.Remote.get_session_id(self.lg_pairing_key)
 
         self.lg_key_delay = int(re.match('\d+', __addon__.getSetting('lg_delay')).group())
         self.lg_own_seqs_enabled = True if __addon__.getSetting('use_own_seq').upper() == 'TRUE' else False
