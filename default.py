@@ -75,7 +75,7 @@ class service(xbmc.Player):
                         notifyLog('Session established. Using session id %s.' % (self.Remote.session_id))
                 except self.Remote.NoConnectionToHostException:
                     notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
-                    notifyOSD(__LS__(30054), icon=__IconError__)
+                    notifyOSD(__addonname__, __LS__(30054), icon=__IconError__)
 
         self.lg_key_delay = int(re.match('\d+', __addon__.getSetting('lg_delay')).group())
         self.lg_own_seqs_enabled = True if __addon__.getSetting('use_own_seq').upper() == 'TRUE' else False
