@@ -1,3 +1,6 @@
+[B]0.1.6[/B]
+- lower delay values reimplemented
+
 [B]0.1.4[/B]
 - smaller improvements
 

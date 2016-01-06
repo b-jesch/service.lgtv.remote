@@ -7,7 +7,7 @@
     <setting id="lg_protocol" type="labelenum" label="30012" lvalues="30017|30015|30016" />
     <setting id="lg_pairing_key" type="text" label="30013" default="" />
     <setting type="lsep" label="30018" />
-    <setting id="lg_delay" type="labelenum" label="30019" lvalues="30025|30026|30027|30028|30029" default="500 msec" />
+    <setting id="lg_delay" type="labelenum" label="30019" lvalues="30023|20024|30025|30026|30027|30028|30029" default="1000 msec" />
     <setting id="use_own_seq" type="bool" label = "30020" default="false" />
     <setting id="lg_3D_on" type="text" label="30021" visible="eq(-1,true)" />
     <setting id="lg_3D_off" type="text" label="30022" visible="eq(-2,true)" />
