@@ -1,3 +1,6 @@
+[B]0.1.8[/B]
+- Addon splitted into script module and service module for better compatibility
+
 [B]0.1.7[/B]
 - lower delay values reimplemented
 
