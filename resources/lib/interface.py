@@ -125,6 +125,8 @@ class Interface(object):
             return self.session_id
         except socket.timeout:
             raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
+        except socket.error:
+            raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
 
     def handle_key_input(self, cmdcode):
         highest_key_input = self._highest_key_input_for_protocol[self._protocol]

@@ -1,6 +1,6 @@
-import xbmc, xbmcgui, xbmcaddon
+import xbmc, xbmcaddon
 import os
-import sys
+import json
 import re
 from resources.lib import interface
 from resources.lib import tools
@@ -22,6 +22,8 @@ __mode3DTAB_off__ =    {'roap': ['400', '20', '400', '14', '14', '20', '400'], '
 __mode3D_on__ = None
 __mode3D_off__ = None
 
+WAIT_FOR_MODE_SELECT = 60
+
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('name')
 __addonID__ = __addon__.getAddonInfo('id')
@@ -33,7 +35,7 @@ __IconConnected__ = xbmc.translatePath(os.path.join( __path__,'resources', 'medi
 __IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'fail.png'))
 __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
 
-class service(xbmc.Player):
+class Service(xbmc.Player):
 
     def __init__(self):
 
@@ -43,7 +45,8 @@ class service(xbmc.Player):
         self.getSettings()
 
         self.isPlaying3D = None
-        self.mode3D = ''
+        self.mode3D = 'OFF'
+        self.modeHasChanged = False
 
     def getSettings(self):
         self.lg_host = __addon__.getSetting('lg_host')
@@ -69,6 +72,33 @@ class service(xbmc.Player):
         self.lg_seq_3D_on = ' '.join(__addon__.getSetting('lg_3D_on').replace(',',' ').split()).split()
         self.lg_seq_3D_off = ' '.join(__addon__.getSetting('lg_3D_off').replace(',',' ').split()).split()
 
+    def getStereoscopicMode(self):
+        mode = {"off": 'OFF', "split_vertical": 'SBS', "split_horizontal": 'TAB',
+                 "row_interleaved": 'INTERLEAVE', "hardware_based": 'HW', "anaglyph_cyan_red": 'CR',
+                 "anaglyph_green_magenta": 'GM', "monoscopic": 'MONO'}
+        query = {
+                "jsonrpc": "2.0",
+                "method": "GUI.GetProperties",
+                "params": {"properties": ["stereoscopicmode"]},
+                "id": 1
+                }
+        _poll = WAIT_FOR_MODE_SELECT
+        while _poll > 0:
+            res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+            if 'result' in res and 'stereoscopicmode' in res['result']:
+                res = res['result']['stereoscopicmode'].get('mode')
+                if self.mode3D != mode[res]:
+                    self.modeHasChanged = True
+                    tools.notifyLog('Stereoscopic mode has changed to %s' % (mode[res]))
+                    self.mode3D = mode[res]
+                    return True
+                _poll -= 1
+                xbmc.sleep(1000)
+            else:
+                break
+        tools.notifyLog('Could not determine steroscopic mode', level=xbmc.LOGERROR)
+        return False
+
     def sendCommand(self, sequence, own_sequence):
         try:
             self.getSettings()
@@ -90,17 +120,16 @@ class service(xbmc.Player):
         if self.isPlayingVideo() and self.lg_protocol is not None:
             _file = self.getPlayingFile().decode('utf-8')
             if re.search(__pattern3D__, _file, re.IGNORECASE):
-                if re.search(__patternSBS__, _file, re.IGNORECASE):
-                    self.mode3D = 'SBS'
-                    __mode3D_on__ = __mode3DSBS_on__
-                elif re.search(__patternTAB__, _file, re.IGNORECASE):
-                    self.mode3D = 'TAB'
-                    __mode3D_on__ = __mode3DTAB_on__
-                else: return
+                if self.getStereoscopicMode():
+                    if self.mode3D == 'SBS': __mode3D_on__ = __mode3DSBS_on__
+                    elif self.mode3D == 'TAB': __mode3D_on__ = __mode3DTAB_on__
+                    else:
+                        return
 
-                tools.notifyLog('Suggest that %s is a 3D %s movie.' % (_file, self.mode3D))
+                tools.notifyLog('Playing \'%s\', initiate command sequence for 3D %s' % (_file, self.mode3D))
                 self.sendCommand(__mode3D_on__[self.lg_protocol], self.lg_seq_3D_on)
                 self.isPlaying3D = True
+        '''
         else:
                 if self.isPlaying3D:
                     if self.mode3D == 'SBS':
@@ -113,41 +142,44 @@ class service(xbmc.Player):
                     self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
                     self.isPlaying3D = False
                     self.mode3D = ''
-
+        '''
     def onPlayBackStopped(self):
-        if self.isPlaying3D:
-            tools.notifyLog('Turn 3D %s mode off' % (self.mode3D))
-            if self.mode3D == 'SBS':
+        _currentMode = self.mode3D
+        if self.getStereoscopicMode() and self.isPlaying3D and self.mode3D == 'OFF':
+            tools.notifyLog('Turn 3D %s mode off' % (_currentMode))
+            if _currentMode == 'SBS':
                 __mode3D_off__ = __mode3DSBS_off__
-            elif self.mode3D == 'TAB':
+            elif _currentMode == 'TAB':
                 __mode3D_off__ = __mode3DTAB_off__
-            else: return
+            else:
+                return
 
             self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
             self.isPlaying3D = False
-            self.mode3D = ''
 
     def onPlayBackEnded(self):
-        if self.isPlaying3D:
-            tools.notifyLog('Turn 3D %s mode off' % (self.mode3D))
-            if self.mode3D == 'SBS':
+        _currentMode = self.mode3D
+        if self.getStereoscopicMode() and self.isPlaying3D and self.mode3D == 'OFF':
+            tools.notifyLog('Turn 3D %s mode off' % (_currentMode))
+            if _currentMode == 'SBS':
                 __mode3D_off__ = __mode3DSBS_off__
-            elif self.mode3D == 'TAB':
+            elif _currentMode == 'TAB':
                 __mode3D_off__ = __mode3DTAB_off__
-            else: return
+            else:
+                return
 
             self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
             self.isPlaying3D = False
-            self.mode3D = ''
+
+service = None
 
 try:
     _host = None if __addon__.getSetting('lg_host') == '' else __addon__.getSetting('lg_host')
-    Service = service()
+    service = Service()
     tools.notifyLog('Service running')
 
-    while not xbmc.abortRequested or not Service.Monitor.waitForAbort():
-        xbmc.sleep(500)
-        if xbmc.abortRequested or Service.Monitor.abortRequested(): break
+    while not service.Monitor.abortRequested():
+        if service.Monitor.waitForAbort(1000): break
 
 except interface.Interface.LGinNetworkNotFoundException:
     tools.notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)
@@ -164,5 +196,5 @@ except interface.Interface.NoConnectionToHostException:
 except Exception, e:
     pass
 
-if Service is not None: del Service
+if service is not None: del service
 tools.notifyLog('Service finished')
