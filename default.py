@@ -122,7 +122,7 @@ class Service(xbmc.Player):
 
     def onPlayBackStarted(self):
         if self.isPlayingVideo() and self.lg_protocol is not None:
-            _file = self.getPlayingFile().decode('utf-8')
+            _file = os.path.basename(self.getPlayingFile().decode('utf-8'))
             if re.search(__pattern3D__, _file, re.IGNORECASE):
                 if self.getStereoscopicMode():
                     if self.mode3D == 'SBS': __mode3D_on__ = __mode3DSBS_on__
@@ -130,7 +130,8 @@ class Service(xbmc.Player):
                     else:
                         return
 
-                tools.notifyLog('Playing \'%s\', initiate command sequence for 3D %s' % (_file, self.mode3D))
+                tools.notifyLog('Playing \'%s\'' % (_file))
+                tools.notifyLog('sending sequence for 3D %s' % (self.mode3D))
                 self.sendCommand(__mode3D_on__[self.lg_protocol], self.lg_seq_3D_on)
                 self.isPlaying3D = True
         '''
