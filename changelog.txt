@@ -1,3 +1,8 @@
+Changelog
+
+[B]0.1.10[/B]
+- Exception handling on SystemExit implemented
+
 [B]0.1.9[/B]
 - Command sequence of 3D Mode now depends from selected/current view mode instead of filename convention
   This prevents from switching to view modes defined by filename if user select other view mode as suggested
