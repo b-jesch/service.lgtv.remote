@@ -84,17 +84,21 @@ class Service(xbmc.Player):
                 }
         _poll = WAIT_FOR_MODE_SELECT
         while _poll > 0:
-            res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
-            if 'result' in res and 'stereoscopicmode' in res['result']:
-                res = res['result']['stereoscopicmode'].get('mode')
-                if self.mode3D != mode[res]:
-                    self.modeHasChanged = True
-                    tools.notifyLog('Stereoscopic mode has changed to %s' % (mode[res]))
-                    self.mode3D = mode[res]
-                    return True
-                _poll -= 1
-                xbmc.sleep(1000)
-            else:
+            try:
+                res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+                if 'result' in res and 'stereoscopicmode' in res['result']:
+                    res = res['result']['stereoscopicmode'].get('mode')
+                    if self.mode3D != mode[res]:
+                        self.modeHasChanged = True
+                        tools.notifyLog('Stereoscopic mode has changed to %s' % (mode[res]))
+                        self.mode3D = mode[res]
+                        return True
+                    _poll -= 1
+                    xbmc.sleep(1000)
+                else:
+                    break
+            except SystemExit:
+                tools.notifyLog('System will terminate this script, closing it.', level=xbmc.LOGERROR)
                 break
         tools.notifyLog('Could not determine steroscopic mode', level=xbmc.LOGERROR)
         return False
