@@ -1,5 +1,9 @@
 Changelog
 
+[B]0.1.11[/B]
+- Reload settings if setup was changed while processing
+- Improved handling if a device is disconnected
+
 [B]0.1.10[/B]
 - Exception handling on SystemExit implemented
 
