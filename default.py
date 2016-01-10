@@ -75,8 +75,10 @@ class Service(xbmc.Player):
                         self.sessionEstablished = True
                         tools.notifyLog('Session established. Using session id %s.' % (self.Remote.session_id))
                 except self.Remote.NoConnectionToHostException:
+                    self.sessionEstablished = False
+                    self.Remote = None
                     tools.notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
-                    tools.notifyOSD(__addonname__, __LS__(30054), icon=__IconError__)
+                    if init: tools.notifyOSD(__addonname__, __LS__(30054), icon=__IconError__)
 
     def readSettings(self, notify=False):
         self.lg_host = __addon__.getSetting('lg_host')
