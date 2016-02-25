@@ -15,10 +15,10 @@ Protocol ROAP (model series > 2012) decimal codes:
 9   Number 7
 10  Number 8
 11  Number 9
-12  UP key among remote Controller’s 4 direction keys
-13  DOWN key among remote Controller’s 4 direction keys
-14  LEFT key among remote Controller’s 4 direction keys
-15  RIGHT key among remote Controller’s 4 direction keys
+12  UP key among remote Controllerï¿½s 4 direction keys
+13  DOWN key among remote Controllerï¿½s 4 direction keys
+14  LEFT key among remote Controllerï¿½s 4 direction keys
+15  RIGHT key among remote Controllerï¿½s 4 direction keys
 20  OK
 21  Home menu
 22  Menu key (same with Home menu key)
