@@ -80,7 +80,7 @@ class Service(xbmc.Player):
                     tools.notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
                     if init: tools.notifyOSD(__addonname__, __LS__(30054), icon=__IconError__)
 
-    def readSettings(self, notify=False):
+    def readSettings(self):
         self.lg_host = __addon__.getSetting('lg_host')
         self.lg_host = None if self.lg_host == '' else self.lg_host
         self.lg_port = __addon__.getSetting('lg_port')
@@ -94,7 +94,7 @@ class Service(xbmc.Player):
         self.lg_seq_3D_off = ' '.join(__addon__.getSetting('lg_3D_off').replace(',',' ').split()).split()
 
         self.Mon.settingsChanged = False
-        if notify: tools.notifyLog('Settings reloaded', level=xbmc.LOGDEBUG)
+        tools.notifyLog('Settings reloaded', level=xbmc.LOGDEBUG)
 
     def getStereoscopicMode(self):
         mode = {"off": 'OFF', "split_vertical": 'SBS', "split_horizontal": 'TAB',
@@ -195,7 +195,7 @@ class Service(xbmc.Player):
             while not self.Mon.abortRequested:
                 _cycle = POLL_INTERVAL if self.sessionEstablished else WAIT_FOR_NEXT_CONNECT
                 if self.Mon.waitForAbort(_cycle): break
-                if self.Mon.settingsChanged: self.readSettings(notify=True)
+                if self.Mon.settingsChanged: self.readSettings()
                 if not self.sessionEstablished: self.getSettings(init=False)
 
         except interface.Interface.LGinNetworkNotFoundException:
