@@ -26,4 +26,4 @@ def dialogYesNo(message, header=__addonname__):
     return OSD.yesno(header.encode('utf-8'), message.encode('utf-8'))
 
 def notifyLog(message, level=xbmc.LOGNOTICE):
-    xbmc.log('[%s] %s' % (__addonID__, message.encode('utf-8')), level)
+    xbmc.log('[%s %s] %s' % (__addonID__, __version__, message.encode('utf-8')), level)

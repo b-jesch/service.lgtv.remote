@@ -1,0 +1,150 @@
+# XBMC Media Center language file
+# Addon Name: LG Smart TV 3D Switch
+# Addon id: service.lgtv.remote
+# Addon version: 0.1.13
+# Addon Provider: Birger Jesch
+msgid ""
+msgstr ""
+"Project-Id-Version: XBMC-Addons\n"
+"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"POT-Creation-Date: 2016-04-21 07:37+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgctxt "Addon Summary"
+msgid "LG Smart TV 3D Switch - for both 2011 and 2012 series"
+msgstr "LG Smart TV 3D Switch - für die 2011er und 2012er Serie"
+
+msgctxt "Addon Description"
+msgid "This addon turns your LG Smart TV into 3D mode automatically over the network if a tagged '3D' content is playing. For this, the TV device must be integrated in your home network properly. This addon supports the old 2011 series and the newer 2012 series too."
+msgstr "Dieses Addon schaltet Dein LG Smart TV-Gerät über das Netzwerk in den 3D-Modus, sobald ein als '3D' markierter Inhalt abgespielt wird. Der LG Smart TV muss dazu korrekt in das Heimnetzwerk eingebunden sein. Es werden sowohl die Modelle bis 2011 als auch die nachfolgenden 2012er unterstützt."
+
+msgctxt "Addon Disclaimer"
+msgid "Use at your own risk. Don't use unknown code sequences!"
+msgstr "Benutzung auf eigene Gefahr. Keine unbekannten Code-Sequenzen verwenden!"
+
+msgctxt "#30000"
+msgid "LG Remote 3D Switch"
+msgstr "LG Remote 3D Switch"
+
+msgctxt "#30010"
+msgid "IP of LG Smart Device"
+msgstr "IP des LG Smart TV Gerätes"
+
+msgctxt "#30011"
+msgid "Communication Port"
+msgstr "Port"
+
+msgctxt "#30012"
+msgid "Communication Protocol"
+msgstr "Protokoll"
+
+msgctxt "#30013"
+msgid "Pairing Key"
+msgstr "Pairing Schlüssel"
+
+msgctxt "#30014"
+msgid "Scan Network for LG Smart TV Device..."
+msgstr "LG Smart TV Gerät im Netzwerk suchen..."
+
+msgctxt "#30015"
+msgid "ROAP"
+msgstr "ROAP"
+
+msgctxt "#30016"
+msgid "HDCP"
+msgstr "HDCP"
+
+msgctxt "#30017"
+msgid "auto detect"
+msgstr "automatische Suche"
+
+msgctxt "#30018"
+msgid "extended Settings"
+msgstr "Erweiterte Einstellungen"
+
+msgctxt "#30019"
+msgid "Key Code Sequence Delay"
+msgstr "Tastencode Verzögerung"
+
+msgctxt "#30020"
+msgid "Use own Key Code Sequences"
+msgstr "Eigene Tastencodes verwenden"
+
+msgctxt "#30021"
+msgid "Key Code sequence 3D on"
+msgstr "Code Sequenz 3D ein"
+
+msgctxt "#30022"
+msgid "Key Code sequence 3D off"
+msgstr "Code Sequenz 3D aus"
+
+msgctxt "#30023"
+msgid "500 msec"
+msgstr "500 msec"
+
+msgctxt "#30024"
+msgid "750 msec"
+msgstr "750 msec"
+
+msgctxt "#30025"
+msgid "1000 msec"
+msgstr "1000 msec"
+
+msgctxt "#30026"
+msgid "1250 msec"
+msgstr "1250 msec"
+
+msgctxt "#30027"
+msgid "1500 msec"
+msgstr "1500 msec"
+
+msgctxt "#30028"
+msgid "1750 msec"
+msgstr "1750 msec"
+
+msgctxt "#30029"
+msgid "2000 msec"
+msgstr "2000 msec"
+
+msgctxt "#30030"
+msgid "Type in pairing key of TV device"
+msgstr "Pairing Schlüssel des TV Gerätes eingeben"
+
+msgctxt "#30031"
+msgid "Pairing with LG Smart TV on IP %s and %s successful. To activate pairing, Kodi must be restarted. Would you like to restart Kodi now?"
+msgstr "LG Smart TV auf IP %s über %s erfolgreich gepairt. Um das Pairing zu aktivieren, muss Kodi neu gestartet werden. Möchtest Du Kodi jetzt neu starten?"
+
+msgctxt "#30032"
+msgid "Session not established. Possibly Kodi must be restarted."
+msgstr "Es konnte keine Session zum Smart TV aufgebaut werden. Eventuell muss Kodi neu gestartet werden."
+
+msgctxt "#30050"
+msgid "There wasn't found any LG Smart Devices on your network. Be sure your devices are turned on or enter IP of LG Smart TV manually."
+msgstr "Kein LG Smart TV Gerät im Netzwerk gefunden. Überprüfe, ob dieses eingeschalten ist, starte den Scan erneut oder gebe die IP Deines Gerätes ein."
+
+msgctxt "#30051"
+msgid "There seems to be an issue with the used device protocol. Device can't be paired."
+msgstr "Das Gerät kann nicht gepairt werden, da ein Problem mit dem verwendeten Protokoll aufgetreten ist."
+
+msgctxt "#30052"
+msgid "Protocol types 'ROAP' and 'HDCP' are not accepted by your device. Can't pair."
+msgstr "Die Protokolle 'ROAP' und 'HDCP' werden nicht von Deinem Gerät unterstützt. Ein Pairing ist nicht möglich."
+
+msgctxt "#30053"
+msgid "No connection to IP address %s. Turn on your LG Smart TV or check your settings."
+msgstr "Keine Verbindung zur IP-Adresse %s. Schalte Dein LG Smart TV ein und/oder überprüfe Deine Einstellungen."
+
+msgctxt "#30054"
+msgid "No connection to LG smart TV"
+msgstr "Keine Verbindung zum LG smart TV"
+
+msgctxt "#30055"
+msgid "This Addon is a part of LG Remote 3D Switch Service and cannot use as a standalone application."
+msgstr "Dieses Addon ist Bestandteil des LG Remote 3D Switch Services und kann nicht als eigenständige Applikation aufgerufen werden."

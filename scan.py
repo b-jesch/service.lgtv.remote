@@ -17,13 +17,13 @@ __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media'
 
 try:
     if sys.argv[1] == 'scan':
-        tools.notifyLog("Scanning for LG Smart TV Devices...")
+        tools.notifyLog("Scanning for LG Smart TV Devices...", level=xbmc.LOGDEBUG)
 
         _host = None if __addon__.getSetting('lg_host') == '' else __addon__.getSetting('lg_host')
         Remote = interface.Interface(host=_host, port=8080, protocol=None)
         _host = Remote.host
         _protocol = Remote._protocol
-        tools.notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()))
+        tools.notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()), level=xbmc.LOGDEBUG)
         #
         # input pairing key if not exists
         #
@@ -35,13 +35,17 @@ try:
 
         _conn = Remote.get_session_id(_pairing_key)
         if _conn:
-            tools.notifyLog('Session with ID %s established' % (Remote.session_id))
+            tools.notifyLog('Session with ID %s established' % (Remote.session_id), level=xbmc.LOGDEBUG)
             # we are ready
 
             __addon__.setSetting('lg_host', _host)
             __addon__.setSetting('lg_protocol', _protocol.upper())
             __addon__.setSetting('lg_pairing_key', _pairing_key)
-            if tools.dialogYesNo(__LS__(30031) % (_host, _protocol.upper())): xbmc.executebuiltin('RestartApp')
+            if tools.dialogYesNo(__LS__(30031) % (_host, _protocol.upper())):
+                tools.notifyLog('Restart Application', level=xbmc.LOGDEBUG)
+                xbmc.executebuiltin('RestartApp')
+            else:
+                tools.notifyLog('User decided not to restart application...', level=xbmc.LOGDEBUG)
         else:
             tools.notifyLog('Session not established. Try again.', xbmc.LOGERROR)
             tools.dialogOSD(__LS__(30032))

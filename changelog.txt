@@ -1,43 +1,47 @@
 Changelog
 
-[B]0.1.12[/B]
+0.1.13
+- Changing language files to transifex .po
 - Minor changes
 
-[B]0.1.11[/B]
+0.1.12
+- Minor changes
+
+0.1.11
 - Reload settings if setup was changed while processing
 - Improved handling if a device is disconnected
 
-[B]0.1.10[/B]
+0.1.10
 - Exception handling on SystemExit implemented
 
-[B]0.1.9[/B]
+0.1.9
 - Command sequence of 3D Mode now depends from selected/current view mode instead of filename convention
   This prevents from switching to view modes defined by filename if user select other view mode as suggested
 
-[B]0.1.8[/B]
+0.1.8
 - Addon splitted into script module and service module for better compatibility
 
-[B]0.1.7[/B]
+0.1.7
 - lower delay values reimplemented
 
-[B]0.1.4[/B]
+0.1.4
 - smaller improvements
 
-[B]0.1.3[/B]
+0.1.3
 - Key delay redefined
 - improved communication handling
 
-[B]0.1.2[/B]
+0.1.2
 - Default code sequences redefined
 
-[B]0.1.0[/B]
+0.1.0
   - Second release
   - extended settings
   - user defined key codes
   - adjustable key delay
 
-[B]0.0.2[/B]
+0.0.2
   - Improved setup handling
 
-[B]0.0.1[/B]
+0.0.1
   - Initial version
