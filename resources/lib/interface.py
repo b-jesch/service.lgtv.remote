@@ -142,7 +142,6 @@ class Interface(object):
             'roap': '/%s/api/command' % (self._protocol),
         }
 
-        tools.notifyLog("Executing command: %s" % (cmdcode), level=xbmc.LOGDEBUG)
         key_input_xml_string = self._xml_version_string + '<command><session>' + self.session_id \
             + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
         conn = httplib.HTTPConnection(self.host, port=self.port)

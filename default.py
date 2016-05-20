@@ -135,10 +135,9 @@ class Service(xbmc.Player):
 
             for code in sequence:
                 if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
-                tools.notifyLog('Wait %s msec.' % (self.lg_key_delay), level=xbmc.LOGDEBUG)
                 # let smart models time for response ;)
                 xbmc.sleep(self.lg_key_delay)
-                tools.notifyLog('Sending keycode %s. Response: %s.' % (code, self.Remote.handle_key_input(code)), level=xbmc.LOGDEBUG)
+                tools.notifyLog('%s msec delayed, sending keycode %s. Response: %s.' % (self.lg_key_delay, code, self.Remote.handle_key_input(code)), level=xbmc.LOGDEBUG)
 
         except self.Remote.NoConnectionToHostException:
             self.sessionEstablished = False
@@ -190,7 +189,7 @@ class Service(xbmc.Player):
     def poll(self):
         _host = None if __addon__.getSetting('lg_host') == '' else __addon__.getSetting('lg_host')
         try:
-            tools.notifyLog('Service running')
+            tools.notifyLog('Service running (%s, %s)' % (self.lg_protocol, self.lg_pairing_key))
 
             while not self.Mon.abortRequested:
                 _cycle = POLL_INTERVAL if self.sessionEstablished else WAIT_FOR_NEXT_CONNECT

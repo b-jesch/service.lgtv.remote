@@ -1,5 +1,8 @@
 Changelog
 
+0.1.14
+- Log messages optimized
+
 0.1.13
 - Changing language files to transifex .po
 - Minor changes
