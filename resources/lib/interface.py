@@ -24,7 +24,7 @@ class Interface(object):
     _highest_key_input_for_protocol = {'hdcp': 255, 'roap': 1024}
 
     class LGinNetworkNotFoundException(Exception): pass
-    class LGProtocolIssueException(Exception): pass
+    class LGProtocolWebOSException(Exception): pass
     class LGProtocollNotAcceptedException(Exception): pass
     class NoConnectionToHostException(Exception): pass
 
@@ -74,10 +74,13 @@ class Interface(object):
         return self.host
 
     def auto_detect_accepted_protocol(self):
-        req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
-        tools.notifyLog("Detecting accepted protocol.", level=xbmc.LOGDEBUG)
         if self._doesServiceExist(3000):
-            raise self.LGProtocolIssueException("Protocol not supported. See https://github.com/ypid/lgcommander/issues/1")
+            tools.notifyLog("Device use WebOS on Port 3000. Not supported.")
+            raise self.LGProtocolWebOSException("WebOS not supported.")
+
+        req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
+        tools.notifyLog("Try to detect accepted protocols", level=xbmc.LOGDEBUG)
+
         try:
             for protocol in self._highest_key_input_for_protocol:
                 tools.notifyLog("Testing protocol: %s" % (protocol), level=xbmc.LOGDEBUG)
@@ -150,7 +153,7 @@ class Interface(object):
 
     def _doesServiceExist(self, port):
         try:
-            tools.notifyLog("Trying to connect to port %s" % (port), level=xbmc.LOGDEBUG)
+            tools.notifyLog("Checking port %s" % (port), level=xbmc.LOGDEBUG)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(1)
             s.connect((self.host, port))

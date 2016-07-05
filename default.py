@@ -200,8 +200,8 @@ class Service(xbmc.Player):
         except interface.Interface.LGinNetworkNotFoundException:
             tools.notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)
             tools.dialogOSD( __LS__(30050))
-        except interface.Interface.LGProtocolIssueException:
-            tools.notifyLog('There is an issue with the device protocol.', level=xbmc.LOGERROR)
+        except interface.Interface.LGProtocolWebOSException:
+            tools.notifyLog('Device use WebOS on port 3000. Not supported.', level=xbmc.LOGERROR)
             tools.dialogOSD(__LS__(30051))
         except interface.Interface.LGProtocollNotAcceptedException:
             tools.notifyLog('Protocol not supported.', level=xbmc.LOGERROR)

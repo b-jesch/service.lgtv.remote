@@ -20,7 +20,8 @@ try:
         tools.notifyLog("Scanning for LG Smart TV Devices...", level=xbmc.LOGDEBUG)
 
         _host = None if __addon__.getSetting('lg_host') == '' else __addon__.getSetting('lg_host')
-        Remote = interface.Interface(host=_host, port=8080, protocol=None)
+        _port = 8080 if __addon__.getSetting('lg_port') == '' else int(__addon__.getSetting('lg_port'))
+        Remote = interface.Interface(host=_host, port=_port, protocol=None)
         _host = Remote.host
         _protocol = Remote._protocol
         tools.notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()), level=xbmc.LOGDEBUG)
@@ -53,8 +54,8 @@ try:
 except interface.Interface.LGinNetworkNotFoundException:
     tools.notifyLog('LG Devices not found in network.', level=xbmc.LOGERROR)
     tools.dialogOSD( __LS__(30050))
-except interface.Interface.LGProtocolIssueException:
-    tools.notifyLog('There is an issue with the device protocol.', level=xbmc.LOGERROR)
+except interface.Interface.LGProtocolWebOSException:
+    tools.notifyLog('Device use WebOS on port 3000. Not supported.', level=xbmc.LOGERROR)
     tools.dialogOSD(__LS__(30051))
 except interface.Interface.LGProtocollNotAcceptedException:
     tools.notifyLog('Protocol not supported.', level=xbmc.LOGERROR)
