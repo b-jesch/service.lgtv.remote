@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="service.lgtv.remote" name="LG Smart TV 3D Switch" version="0.1.15" provider-name="Birger Jesch">
+  <requires>
+    <import addon="xbmc.python" version="2.20.0"/>
+  </requires>
   <extension point="xbmc.service" library="default.py" start="login" />
   <extension point="xbmc.python.script" library="scan.py" />
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
     <summary lang="en">LG Smart TV 3D Switch - for both 2011 and 2012 series</summary>
-    <description lang="en">This addon turns your LG Smart TV into 3D mode automatically over the network if a tagged '3D' content is playing. For this, the TV device must be integrated in your home network properly. This addon supports the old 2011 series and the newer 2012 series too.</description>
+    <description lang="en">This addon turns your LG Smart TV into 3D mode automatically over the network if tagged '3D' content is playing. For this, the LG TV device must be integrated in your home network properly. This addon supports LG TVs of the old 2011 series and the newer 2012 models too.</description>
     <summary lang="de">LG Smart TV 3D Switch - für die 2011er und 2012er Serie</summary>
     <description lang="de">Dieses Addon schaltet Dein LG Smart TV-Gerät über das Netzwerk in den 3D-Modus, sobald ein als '3D' markierter Inhalt abgespielt wird. Der LG Smart TV muss dazu korrekt in das Heimnetzwerk eingebunden sein. Es werden sowohl die Modelle bis 2011 als auch die nachfolgenden 2012er unterstützt.</description>
     <disclaimer lang="de">Benutzung auf eigene Gefahr. Keine unbekannten Code-Sequenzen verwenden!</disclaimer>
