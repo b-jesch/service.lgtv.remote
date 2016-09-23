@@ -23,7 +23,7 @@ __mode3D_on__ = None
 __mode3D_off__ = None
 
 WAIT_FOR_MODE_SELECT = 60
-WAIT_FOR_NEXT_CONNECT = 60
+WAIT_FOR_NEXT_CONNECT = 30
 POLL_INTERVAL = 1
 
 __addon__ = xbmcaddon.Addon()
