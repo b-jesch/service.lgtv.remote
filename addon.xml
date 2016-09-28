@@ -18,5 +18,13 @@
     <website>http://vdr4bj1.no-ip.org</website>
     <email>birger.jesch@gmail.com</email>
     <source>https://github.com/b-jesch/service.lgtv.remote</source>
+    <news>
+      0.1.20
+      - smaller changes, bump version due repo change
+    </news>
+    <assets>
+      <screenshot>resources/screenshots/screenshot-01.jpg</screenshot>
+      <screenshot>resources/screenshots/screenshot-02.jpg</screenshot>
+    </assets>
   </extension>
 </addon>
