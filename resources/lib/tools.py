@@ -1,18 +1,19 @@
 import xbmc
 import xbmcgui
 import xbmcaddon
+import xbmcvfs
 import os
 
 ADDON = xbmcaddon.Addon()
 ADDON_NAME = ADDON.getAddonInfo('name')
 ADDON_ID = ADDON.getAddonInfo('id')
-ADDON_PATH = ADDON.getAddonInfo('path')
+ADDON_PATH = xbmcvfs.translatePath(ADDON.getAddonInfo('path'))
 ADDON_VERSION = ADDON.getAddonInfo('version')
 LS = ADDON.getLocalizedString
 
-ICON_CONNECTED = xbmc.translatePath(os.path.join(ADDON_PATH, 'resources', 'media', 'ok.png'))
-ICON_ERROR = xbmc.translatePath(os.path.join(ADDON_PATH, 'resources', 'media', 'fail.png'))
-ICON_DEFAULT = xbmc.translatePath(os.path.join(ADDON_PATH, 'resources', 'media', 'default.png'))
+ICON_CONNECTED = os.path.join(ADDON_PATH, 'resources', 'media', 'ok.png')
+ICON_ERROR = os.path.join(ADDON_PATH, 'resources', 'media', 'fail.png')
+ICON_DEFAULT = os.path.join(ADDON_PATH, 'resources', 'media', 'default.png')
 
 OSD = xbmcgui.Dialog()
 
