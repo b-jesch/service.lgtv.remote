@@ -1,4 +1,6 @@
-import xbmc, xbmcaddon
+import xbmc
+import xbmcaddon
+import xbmcvfs
 import os
 import sys
 from resources.lib import interface
@@ -7,13 +9,13 @@ from resources.lib import tools
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('name')
 __addonID__ = __addon__.getAddonInfo('id')
-__path__ = __addon__.getAddonInfo('path')
+__path__ = xbmc.translatePath(__addon__.getAddonInfo('path'))
 __version__ = __addon__.getAddonInfo('version')
 __LS__ = __addon__.getLocalizedString
 
-__IconConnected__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'ok.png'))
-__IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'fail.png'))
-__IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
+__IconConnected__ = os.path.join( __path__,'resources', 'media', 'ok.png')
+__IconError__ = os.path.join( __path__,'resources', 'media', 'fail.png')
+__IconDefault__ = os.path.join( __path__,'resources', 'media', 'default.png')
 
 try:
     if sys.argv[1] == 'scan':
@@ -57,7 +59,7 @@ except interface.Interface.LGinNetworkNotFoundException:
 except interface.Interface.LGProtocolWebOSException:
     tools.notifyLog('Device use WebOS on port 3000. Not supported.', level=xbmc.LOGERROR)
     tools.dialogOSD(__LS__(30051))
-except interface.Interface.LGProtocollNotAcceptedException:
+except interface.Interface.LGProtocolNotAcceptedException:
     tools.notifyLog('Protocol not supported.', level=xbmc.LOGERROR)
     tools.dialogOSD(__LS__(30052))
 except interface.Interface.NoConnectionToHostException:

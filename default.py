@@ -1,4 +1,6 @@
-import xbmc, xbmcaddon
+import xbmc
+import xbmcaddon
+import xbmcvfs
 import os
 import json
 import re
@@ -29,13 +31,14 @@ POLL_INTERVAL = 1
 __addon__ = xbmcaddon.Addon()
 __addonname__ = __addon__.getAddonInfo('name')
 __addonID__ = __addon__.getAddonInfo('id')
-__path__ = __addon__.getAddonInfo('path')
+__path__ = xbmcvfs.translatePath(__addon__.getAddonInfo('path'))
 __version__ = __addon__.getAddonInfo('version')
 __LS__ = __addon__.getLocalizedString
 
-__IconConnected__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'ok.png'))
-__IconError__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'fail.png'))
-__IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media', 'default.png'))
+__IconConnected__ = os.path.join(__path__, 'resources', 'media', 'ok.png')
+__IconError__ = os.path.join(__path__, 'resources', 'media', 'fail.png')
+__IconDefault__ = os.path.join(__path__, 'resources', 'media', 'default.png')
+
 
 class Monitor(xbmc.Monitor):
 
@@ -50,6 +53,7 @@ class Monitor(xbmc.Monitor):
 
     def onAbortRequested(self):
         self.abortRequested = True
+
 
 class Service(xbmc.Player):
 
@@ -73,7 +77,7 @@ class Service(xbmc.Player):
                     if not self.Remote.session_id:
                         self.Remote.get_session_id(self.lg_pairing_key)
                         self.sessionEstablished = True
-                        tools.notifyLog('Session established. Using session id %s.' % (self.Remote.session_id), level=xbmc.LOGDEBUG)
+                        tools.notifyLog('Session established. Using session id %s.' % self.Remote.session_id, level=xbmc.LOGDEBUG)
                 except self.Remote.NoConnectionToHostException:
                     self.sessionEstablished = False
                     self.Remote = None
@@ -90,16 +94,16 @@ class Service(xbmc.Player):
 
         self.lg_key_delay = int(re.match('\d+', __addon__.getSetting('lg_delay')).group())
         self.lg_own_seqs_enabled = True if __addon__.getSetting('use_own_seq').upper() == 'TRUE' else False
-        self.lg_seq_3D_on = ' '.join(__addon__.getSetting('lg_3D_on').replace(',',' ').split()).split()
-        self.lg_seq_3D_off = ' '.join(__addon__.getSetting('lg_3D_off').replace(',',' ').split()).split()
+        self.lg_seq_3D_on = ' '.join(__addon__.getSetting('lg_3D_on').replace(',', ' ').split()).split()
+        self.lg_seq_3D_off = ' '.join(__addon__.getSetting('lg_3D_off').replace(',', ' ').split()).split()
 
         self.Mon.settingsChanged = False
         tools.notifyLog('Settings reloaded', level=xbmc.LOGDEBUG)
 
     def getStereoscopicMode(self):
         mode = {"off": 'OFF', "split_vertical": 'SBS', "split_horizontal": 'TAB',
-                 "row_interleaved": 'INTERLEAVE', "hardware_based": 'HW', "anaglyph_cyan_red": 'CR',
-                 "anaglyph_green_magenta": 'GM', "monoscopic": 'MONO'}
+                "row_interleaved": 'INTERLEAVE', "hardware_based": 'HW', "anaglyph_cyan_red": 'CR',
+                "anaglyph_green_magenta": 'GM', "monoscopic": 'MONO'}
         query = {
                 "jsonrpc": "2.0",
                 "method": "GUI.GetProperties",
@@ -109,7 +113,7 @@ class Service(xbmc.Player):
         _poll = WAIT_FOR_MODE_SELECT
         while _poll > 0:
             try:
-                res = json.loads(xbmc.executeJSONRPC(json.dumps(query, encoding='utf-8')))
+                res = json.loads(xbmc.executeJSONRPC(json.dumps(query)))
                 if 'result' in res and 'stereoscopicmode' in res['result']:
                     res = res['result']['stereoscopicmode'].get('mode')
                     if self.mode3D != mode[res]:
@@ -145,7 +149,7 @@ class Service(xbmc.Player):
 
     def onPlayBackStarted(self):
         if self.isPlayingVideo() and self.lg_protocol is not None:
-            _file = os.path.basename(self.getPlayingFile().decode('utf-8'))
+            _file = os.path.basename(self.getPlayingFile())
             if re.search(__pattern3D__, _file, re.IGNORECASE):
                 if self.getStereoscopicMode():
                     if self.mode3D == 'SBS': __mode3D_on__ = __mode3DSBS_on__
@@ -154,20 +158,17 @@ class Service(xbmc.Player):
                         return
 
                 tools.notifyLog('Playing \'%s\'' % (_file), level=xbmc.LOGDEBUG)
-                tools.notifyLog('sending sequence for 3D %s' % (self.mode3D), level=xbmc.LOGDEBUG)
+                tools.notifyLog('sending sequence for 3D %s' % self.mode3D, level=xbmc.LOGDEBUG)
                 self.sendCommand(__mode3D_on__[self.lg_protocol], self.lg_seq_3D_on)
                 self.isPlaying3D = True
 
     def onPlayBackStopped(self):
         _currentMode = self.mode3D
         if self.getStereoscopicMode() and self.isPlaying3D and self.mode3D == 'OFF':
-            tools.notifyLog('Turn 3D %s mode off' % (_currentMode), level=xbmc.LOGDEBUG)
-            if _currentMode == 'SBS':
-                __mode3D_off__ = __mode3DSBS_off__
-            elif _currentMode == 'TAB':
-                __mode3D_off__ = __mode3DTAB_off__
-            else:
-                return
+            tools.notifyLog('Turn 3D %s mode off' % _currentMode, level=xbmc.LOGDEBUG)
+            if _currentMode == 'SBS': __mode3D_off__ = __mode3DSBS_off__
+            elif _currentMode == 'TAB': __mode3D_off__ = __mode3DTAB_off__
+            else: return
 
             self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
             self.isPlaying3D = False
@@ -175,13 +176,10 @@ class Service(xbmc.Player):
     def onPlayBackEnded(self):
         _currentMode = self.mode3D
         if self.getStereoscopicMode() and self.isPlaying3D and self.mode3D == 'OFF':
-            tools.notifyLog('Turn 3D %s mode off' % (_currentMode), level=xbmc.LOGDEBUG)
-            if _currentMode == 'SBS':
-                __mode3D_off__ = __mode3DSBS_off__
-            elif _currentMode == 'TAB':
-                __mode3D_off__ = __mode3DTAB_off__
-            else:
-                return
+            tools.notifyLog('Turn 3D %s mode off' % _currentMode, level=xbmc.LOGDEBUG)
+            if _currentMode == 'SBS':  __mode3D_off__ = __mode3DSBS_off__
+            elif _currentMode == 'TAB': __mode3D_off__ = __mode3DTAB_off__
+            else: return
 
             self.sendCommand(__mode3D_off__[self.lg_protocol], self.lg_seq_3D_off)
             self.isPlaying3D = False
@@ -203,14 +201,15 @@ class Service(xbmc.Player):
         except interface.Interface.LGProtocolWebOSException:
             tools.notifyLog('Device use WebOS on port 3000. Not supported.', level=xbmc.LOGERROR)
             tools.dialogOSD(__LS__(30051))
-        except interface.Interface.LGProtocollNotAcceptedException:
+        except interface.Interface.LGProtocolNotAcceptedException:
             tools.notifyLog('Protocol not supported.', level=xbmc.LOGERROR)
             tools.dialogOSD(__LS__(30052))
         except interface.Interface.NoConnectionToHostException:
             tools.notifyLog('No connection to host.', level=xbmc.LOGERROR)
             tools.dialogOSD(__LS__(30053) % (_host))
-        except Exception, e:
+        except Exception as e:
             pass
+
 
 RemoteService = Service()
 RemoteService.poll()

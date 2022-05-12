@@ -16,14 +16,18 @@ __IconDefault__ = xbmc.translatePath(os.path.join( __path__,'resources', 'media'
 
 OSD = xbmcgui.Dialog()
 
+
 def notifyOSD(header, message, icon=__IconDefault__):
-    OSD.notification(header.encode('utf-8'), message.encode('utf-8'), icon)
+    OSD.notification(header, message, icon)
+
 
 def dialogOSD(message, header=__addonname__):
-    OSD.ok(header.encode('utf-8'), message.encode('utf-8'))
+    OSD.ok(header, message)
+
 
 def dialogYesNo(message, header=__addonname__):
-    return OSD.yesno(header.encode('utf-8'), message.encode('utf-8'))
+    return OSD.yesno(header, message)
 
-def notifyLog(message, level=xbmc.LOGNOTICE):
-    xbmc.log('[%s %s] %s' % (__addonID__, __version__, message.encode('utf-8')), level)
+
+def notifyLog(message, level=xbmc.LOGINFO):
+    xbmc.log('[%s %s] %s' % (__addonID__, __version__, message), level)

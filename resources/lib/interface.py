@@ -8,14 +8,16 @@ import time
 import tools
 
 import xml.etree.ElementTree as etree
-import httplib
+import http.client as httplib
 import xbmc
 
 # KEY_PAIRING='SMYBYA' # LG at Home
 # KEY_PAIRING='045855' # LG at Work
 
+
 class KeyInputError(Exception):
     pass
+
 
 class Interface(object):
 
@@ -25,17 +27,17 @@ class Interface(object):
 
     class LGinNetworkNotFoundException(Exception): pass
     class LGProtocolWebOSException(Exception): pass
-    class LGProtocollNotAcceptedException(Exception): pass
+    class LGProtocolNotAcceptedException(Exception): pass
     class NoConnectionToHostException(Exception): pass
 
     def __init__(self, host=None, port=8080, protocol=None):
 
         self.port = int(port)
         self.host = host
-        if host == None: self.host = self.getip()
+        if host is None: self.host = self.getip()
 
         self._protocol = protocol
-        if protocol == None:
+        if protocol is None:
             self._protocol = self.auto_detect_accepted_protocol()
 
         self._pairing_key = None
@@ -65,7 +67,7 @@ class Interface(object):
                     break
                 i += 1
                 time.sleep(1)
-            except:
+            except Exception as e:
                 pass
         sock.close()
 
@@ -83,27 +85,27 @@ class Interface(object):
 
         try:
             for protocol in self._highest_key_input_for_protocol:
-                tools.notifyLog("Testing protocol: %s" % (protocol), level=xbmc.LOGDEBUG)
+                tools.notifyLog("Testing protocol: %s" % protocol, level=xbmc.LOGDEBUG)
                 conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
-                conn.request("POST", "/%s/api/auth" % (protocol), req_key_xml_string, headers=self._headers)
+                conn.request("POST", "/%s/api/auth" % protocol, req_key_xml_string, headers=self._headers)
                 http_response = conn.getresponse()
-                tools.notifyLog("Got response: %s" % (http_response.reason), level=xbmc.LOGDEBUG)
+                tools.notifyLog("Got response: %s" % http_response.reason, level=xbmc.LOGDEBUG)
                 if http_response.reason == 'OK':
                     self._protocol = protocol
-                    tools.notifyLog("Using protocol: %s" % (self._protocol), level=xbmc.LOGDEBUG)
+                    tools.notifyLog("Using protocol: %s" % self._protocol, level=xbmc.LOGDEBUG)
                     return self._protocol
-            raise self.LGProtocollNotAcceptedException("No accepted protocol found.")
+            raise self.LGProtocolNotAcceptedException("No accepted protocol found.")
         except:
-            raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
+            raise self.NoConnectionToHostException("No connection to host %s" % self.host)
 
     def display_key_on_screen(self):
         conn = httplib.HTTPConnection(self.host, port=self.port)
         req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
         tools.notifyLog("Request device to show key on screen.", level=xbmc.LOGDEBUG)
-        conn.request('POST', '/%s/api/auth' % (self._protocol), req_key_xml_string, headers=self._headers)
+        conn.request('POST', '/%s/api/auth' % self._protocol, req_key_xml_string, headers=self._headers)
         http_response = conn.getresponse()
-        tools.notifyLog("Device response was: %s" % (http_response.reason), level=xbmc.LOGDEBUG)
-        if http_response.reason != "OK": raise Exception("Network error: %s" % (http_response.reason))
+        tools.notifyLog("Device response was: %s" % http_response.reason, level=xbmc.LOGDEBUG)
+        if http_response.reason != "OK": raise Exception("Network error: %s" % http_response.reason)
 
         return http_response.reason
 
@@ -111,38 +113,38 @@ class Interface(object):
         if not pairing_key: return False
 
         self._pairing_key = pairing_key
-        tools.notifyLog("Trying paring key: %s" % (self._pairing_key), level=xbmc.LOGDEBUG)
+        tools.notifyLog("Trying paring key: %s" % self._pairing_key, level=xbmc.LOGDEBUG)
         pair_cmd_xml_string = self._xml_version_string + '<auth><type>AuthReq</type><value>' + \
             self._pairing_key + '</value></auth>'
         try:
             conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
-            conn.request('POST', '/%s/api/auth' % (self._protocol), pair_cmd_xml_string, headers=self._headers)
+            conn.request('POST', '/%s/api/auth' % self._protocol, pair_cmd_xml_string, headers=self._headers)
             http_response = conn.getresponse()
             if http_response.reason != 'OK': return False
 
             tree = etree.XML(http_response.read())
             self.session_id = tree.find('session').text
-            tools.notifyLog("Session ID is %s" % (self.session_id), level=xbmc.LOGDEBUG)
+            tools.notifyLog("Session ID is %s" % self.session_id, level=xbmc.LOGDEBUG)
             if len(self.session_id) < 8: return False
 
             return self.session_id
         except socket.timeout:
-            raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
+            raise self.NoConnectionToHostException("No connection to host %s" % self.host)
         except socket.error:
-            raise self.NoConnectionToHostException("No connection to host %s" % (self.host))
+            raise self.NoConnectionToHostException("No connection to host %s" % self.host)
 
     def handle_key_input(self, cmdcode):
         highest_key_input = self._highest_key_input_for_protocol[self._protocol]
         try:
             if 0 > int(cmdcode) or int(cmdcode) > highest_key_input:
-                raise KeyInputError("Key input %s is not supported." % (cmdcode))
+                raise KeyInputError("Key input %s is not supported." % cmdcode)
         except ValueError:
-            raise KeyInputError("Key input %s is not a number" % (cmdcode))
+            raise KeyInputError("Key input %s is not a number" % cmdcode)
         if not self.session_id: raise Exception("No valid session key available.")
 
         command_url_for_protocol = {
-            'hdcp': '/%s/api/dtv_wifirc' % (self._protocol),
-            'roap': '/%s/api/command' % (self._protocol),
+            'hdcp': '/%s/api/dtv_wifirc' % self._protocol,
+            'roap': '/%s/api/command' % self._protocol,
         }
 
         key_input_xml_string = self._xml_version_string + '<command><session>' + self.session_id \
@@ -153,7 +155,7 @@ class Interface(object):
 
     def _doesServiceExist(self, port):
         try:
-            tools.notifyLog("Checking port %s" % (port), level=xbmc.LOGDEBUG)
+            tools.notifyLog("Checking port %s" % port, level=xbmc.LOGDEBUG)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(1)
             s.connect((self.host, port))
