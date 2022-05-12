@@ -2,10 +2,10 @@
 # encoding: utf-8
 
 import re
-import logging
 import socket
 import time
-import tools
+from . tools import *
+
 
 import xml.etree.ElementTree as etree
 import http.client as httplib
@@ -60,9 +60,9 @@ class Interface(object):
                 gotbytes, addressport = sock.recvfrom(512)
                 gotstr = gotbytes.decode()
                 if re.search('LG', gotstr):
-                    tools.notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
+                    notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
                     self.host, self.port = addressport
-                    tools.notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
+                    notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
                     found = True
                     break
                 i += 1
@@ -72,27 +72,27 @@ class Interface(object):
         sock.close()
 
         if not found: raise self.LGinNetworkNotFoundException('LG TV not found')
-        tools.notifyLog("Using device: %s over transport protocol: %s" % (self.host, self.port), level=xbmc.LOGDEBUG)
+        notifyLog("Using device: %s over transport protocol: %s" % (self.host, self.port), level=xbmc.LOGDEBUG)
         return self.host
 
     def auto_detect_accepted_protocol(self):
         if self._doesServiceExist(3000):
-            tools.notifyLog("Device use WebOS on Port 3000. Not supported.")
+            notifyLog("Device use WebOS on Port 3000. Not supported.")
             raise self.LGProtocolWebOSException("WebOS not supported.")
 
         req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
-        tools.notifyLog("Try to detect accepted protocols", level=xbmc.LOGDEBUG)
+        notifyLog("Try to detect accepted protocols", level=xbmc.LOGDEBUG)
 
         try:
             for protocol in self._highest_key_input_for_protocol:
-                tools.notifyLog("Testing protocol: %s" % protocol, level=xbmc.LOGDEBUG)
+                notifyLog("Testing protocol: %s" % protocol, level=xbmc.LOGDEBUG)
                 conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
                 conn.request("POST", "/%s/api/auth" % protocol, req_key_xml_string, headers=self._headers)
                 http_response = conn.getresponse()
-                tools.notifyLog("Got response: %s" % http_response.reason, level=xbmc.LOGDEBUG)
+                notifyLog("Got response: %s" % http_response.reason, level=xbmc.LOGDEBUG)
                 if http_response.reason == 'OK':
                     self._protocol = protocol
-                    tools.notifyLog("Using protocol: %s" % self._protocol, level=xbmc.LOGDEBUG)
+                    notifyLog("Using protocol: %s" % self._protocol, level=xbmc.LOGDEBUG)
                     return self._protocol
             raise self.LGProtocolNotAcceptedException("No accepted protocol found.")
         except:
@@ -101,10 +101,10 @@ class Interface(object):
     def display_key_on_screen(self):
         conn = httplib.HTTPConnection(self.host, port=self.port)
         req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
-        tools.notifyLog("Request device to show key on screen.", level=xbmc.LOGDEBUG)
+        notifyLog("Request device to show key on screen.", level=xbmc.LOGDEBUG)
         conn.request('POST', '/%s/api/auth' % self._protocol, req_key_xml_string, headers=self._headers)
         http_response = conn.getresponse()
-        tools.notifyLog("Device response was: %s" % http_response.reason, level=xbmc.LOGDEBUG)
+        notifyLog("Device response was: %s" % http_response.reason, level=xbmc.LOGDEBUG)
         if http_response.reason != "OK": raise Exception("Network error: %s" % http_response.reason)
 
         return http_response.reason
@@ -113,7 +113,7 @@ class Interface(object):
         if not pairing_key: return False
 
         self._pairing_key = pairing_key
-        tools.notifyLog("Trying paring key: %s" % self._pairing_key, level=xbmc.LOGDEBUG)
+        notifyLog("Trying paring key: %s" % self._pairing_key, level=xbmc.LOGDEBUG)
         pair_cmd_xml_string = self._xml_version_string + '<auth><type>AuthReq</type><value>' + \
             self._pairing_key + '</value></auth>'
         try:
@@ -124,7 +124,7 @@ class Interface(object):
 
             tree = etree.XML(http_response.read())
             self.session_id = tree.find('session').text
-            tools.notifyLog("Session ID is %s" % self.session_id, level=xbmc.LOGDEBUG)
+            notifyLog("Session ID is %s" % self.session_id, level=xbmc.LOGDEBUG)
             if len(self.session_id) < 8: return False
 
             return self.session_id
@@ -155,7 +155,7 @@ class Interface(object):
 
     def _doesServiceExist(self, port):
         try:
-            tools.notifyLog("Checking port %s" % port, level=xbmc.LOGDEBUG)
+            notifyLog("Checking port %s" % port, level=xbmc.LOGDEBUG)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(1)
             s.connect((self.host, port))
