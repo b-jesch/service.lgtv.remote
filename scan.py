@@ -9,31 +9,25 @@ try:
         _host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
         _port = 8080 if ADDON.getSetting('lg_port') == '' else int(ADDON.getSetting('lg_port'))
         Remote = interface.Interface(host=_host, port=_port, protocol=None)
-        _host = Remote.host
-        _protocol = Remote._protocol
-        notifyLog('Device (IP %s protocol %s) found' % (_host, _protocol.upper()), level=xbmc.LOGDEBUG)
+        notifyLog('Device (IP %s protocol %s) found' % (Remote.host, Remote.protocol.upper()), level=xbmc.LOGDEBUG)
         #
         # input pairing key if not exists
         #
-        _pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
-        if _pairing_key is None:
+        pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
+        if pairing_key is None:
             kb = xbmc.Keyboard('', LS(30030))
             kb.doModal()
-            if kb.isConfirmed() and kb.getText() != '':  _pairing_key = kb.getText()
+            if kb.isConfirmed() and kb.getText() != '':  pairing_key = kb.getText()
 
-        _conn = Remote.get_session_id(_pairing_key)
+        _conn = Remote.get_session_id(pairing_key)
         if _conn:
-            notifyLog('Session with ID %s established' % (Remote.session_id), level=xbmc.LOGDEBUG)
+            notifyLog('Session with ID %s established' % Remote.session_id, level=xbmc.LOGDEBUG)
             # we are ready
 
-            ADDON.setSetting('lg_host', _host)
-            ADDON.setSetting('lg_protocol', _protocol.upper())
-            ADDON.setSetting('lg_pairing_key', _pairing_key)
-            if dialogYesNo(LS(30031) % (_host, _protocol.upper())):
-                notifyLog('Restart Application', level=xbmc.LOGDEBUG)
-                xbmc.executebuiltin('RestartApp')
-            else:
-                notifyLog('User decided not to restart application...', level=xbmc.LOGDEBUG)
+            ADDON.setSetting('lg_host', Remote.host)
+            ADDON.setSetting('lg_protocol', Remote.protocol.upper())
+            ADDON.setSetting('lg_pairing_key', pairing_key)
+            dialogOSD(LS(30031) % (Remote.host, pairing_key))
         else:
             notifyLog('Session not established. Try again.', xbmc.LOGERROR)
             dialogOSD(LS(30032))

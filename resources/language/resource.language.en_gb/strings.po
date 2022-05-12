@@ -126,11 +126,11 @@ msgid "Type in pairing key of TV device"
 msgstr ""
 
 msgctxt "#30031"
-msgid "Pairing with LG Smart TV on IP %s and %s successful. To activate pairing, Kodi must be restarted. Would you like to restart Kodi now?"
+msgid "Pairing with LG Smart TV on IP %s and %s successful. For completing the procedure exit the Addon Settings."
 msgstr ""
 
 msgctxt "#30032"
-msgid "Session not established. Possibly Kodi must be restarted."
+msgid "Session not established."
 msgstr ""
 
 #exceptions

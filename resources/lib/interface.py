@@ -3,7 +3,6 @@
 
 import re
 import socket
-import time
 from . tools import *
 
 
@@ -32,13 +31,12 @@ class Interface(object):
 
     def __init__(self, host=None, port=8080, protocol=None):
 
-        self.port = int(port)
+        self.port = port
         self.host = host
-        if host is None: self.host = self.getip()
+        if host is None: self.getip()
 
-        self._protocol = protocol
-        if protocol is None:
-            self._protocol = self.auto_detect_accepted_protocol()
+        self.protocol = protocol
+        if protocol is None: self.auto_detect_accepted_protocol()
 
         self._pairing_key = None
         self.session_id = None
@@ -61,19 +59,18 @@ class Interface(object):
                 gotstr = gotbytes.decode()
                 if re.search('LG', gotstr):
                     notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
-                    self.host, self.port = addressport
-                    notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
+                    self.host, port = addressport
+                    notifyLog('Found device: %s:%s' % (self.host, port), level=xbmc.LOGDEBUG)
                     found = True
                     break
                 i += 1
-                time.sleep(1)
+                xbmc.sleep(1000)
             except Exception as e:
                 pass
         sock.close()
 
         if not found: raise self.LGinNetworkNotFoundException('LG TV not found')
-        notifyLog("Using device: %s over transport protocol: %s" % (self.host, self.port), level=xbmc.LOGDEBUG)
-        return self.host
+        notifyLog("Using device: %s:%s" % (self.host, self.port), level=xbmc.LOGDEBUG)
 
     def auto_detect_accepted_protocol(self):
         if self._doesServiceExist(3000):
@@ -81,33 +78,22 @@ class Interface(object):
             raise self.LGProtocolWebOSException("WebOS not supported.")
 
         req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
-        notifyLog("Try to detect accepted protocols", level=xbmc.LOGDEBUG)
 
-        try:
-            for protocol in self._highest_key_input_for_protocol:
-                notifyLog("Testing protocol: %s" % protocol, level=xbmc.LOGDEBUG)
+        for protocol in self._highest_key_input_for_protocol:
+            try:
+                notifyLog("Testing protocol %s on %s:%s" % (protocol, self.host, self.port), level=xbmc.LOGDEBUG)
                 conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
                 conn.request("POST", "/%s/api/auth" % protocol, req_key_xml_string, headers=self._headers)
                 http_response = conn.getresponse()
                 notifyLog("Got response: %s" % http_response.reason, level=xbmc.LOGDEBUG)
                 if http_response.reason == 'OK':
-                    self._protocol = protocol
-                    notifyLog("Using protocol: %s" % self._protocol, level=xbmc.LOGDEBUG)
-                    return self._protocol
-            raise self.LGProtocolNotAcceptedException("No accepted protocol found.")
-        except:
-            raise self.NoConnectionToHostException("No connection to host %s" % self.host)
-
-    def display_key_on_screen(self):
-        conn = httplib.HTTPConnection(self.host, port=self.port)
-        req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
-        notifyLog("Request device to show key on screen.", level=xbmc.LOGDEBUG)
-        conn.request('POST', '/%s/api/auth' % self._protocol, req_key_xml_string, headers=self._headers)
-        http_response = conn.getresponse()
-        notifyLog("Device response was: %s" % http_response.reason, level=xbmc.LOGDEBUG)
-        if http_response.reason != "OK": raise Exception("Network error: %s" % http_response.reason)
-
-        return http_response.reason
+                    self.protocol = protocol
+                    notifyLog("Using protocol: %s" % self.protocol, level=xbmc.LOGDEBUG)
+                    return
+            except Exception as e:
+                notifyLog('Error while testing connection: %s' % str(e), xbmc.LOGERROR)
+            xbmc.sleep(1000)
+        raise self.LGProtocolNotAcceptedException("No accepted protocol found.")
 
     def get_session_id(self, pairing_key):
         if not pairing_key: return False
@@ -118,7 +104,7 @@ class Interface(object):
             self._pairing_key + '</value></auth>'
         try:
             conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
-            conn.request('POST', '/%s/api/auth' % self._protocol, pair_cmd_xml_string, headers=self._headers)
+            conn.request('POST', '/%s/api/auth' % self.protocol, pair_cmd_xml_string, headers=self._headers)
             http_response = conn.getresponse()
             if http_response.reason != 'OK': return False
 
@@ -134,7 +120,7 @@ class Interface(object):
             raise self.NoConnectionToHostException("No connection to host %s" % self.host)
 
     def handle_key_input(self, cmdcode):
-        highest_key_input = self._highest_key_input_for_protocol[self._protocol]
+        highest_key_input = self._highest_key_input_for_protocol[self.protocol]
         try:
             if 0 > int(cmdcode) or int(cmdcode) > highest_key_input:
                 raise KeyInputError("Key input %s is not supported." % cmdcode)
@@ -143,14 +129,14 @@ class Interface(object):
         if not self.session_id: raise Exception("No valid session key available.")
 
         command_url_for_protocol = {
-            'hdcp': '/%s/api/dtv_wifirc' % self._protocol,
-            'roap': '/%s/api/command' % self._protocol,
+            'hdcp': '/%s/api/dtv_wifirc' % self.protocol,
+            'roap': '/%s/api/command' % self.protocol,
         }
 
         key_input_xml_string = self._xml_version_string + '<command><session>' + self.session_id \
             + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
         conn = httplib.HTTPConnection(self.host, port=self.port)
-        conn.request('POST', command_url_for_protocol[self._protocol], key_input_xml_string, headers=self._headers)
+        conn.request('POST', command_url_for_protocol[self.protocol], key_input_xml_string, headers=self._headers)
         return conn.getresponse().reason
 
     def _doesServiceExist(self, port):

@@ -14,17 +14,11 @@
     <disclaimer lang="de">Benutzung auf eigene Gefahr. Keine unbekannten Code-Sequenzen verwenden!</disclaimer>
     <disclaimer lang="en">Use at your own risk. Don't use unknown code sequences!</disclaimer>
     <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
-    <forum></forum>
-    <website>http://vdr4bj1.no-ip.org</website>
     <email>birger.jesch@gmail.com</email>
     <source>https://github.com/b-jesch/service.lgtv.remote</source>
-    <news>
-      0.1.20
-      - smaller changes, bump version due repo change
-    </news>
     <assets>
-      <screenshot>resources/screenshots/screenshot-01.jpg</screenshot>
-      <screenshot>resources/screenshots/screenshot-02.jpg</screenshot>
+      <icon>icon.png</icon>
+      <fanart>fanart.png</fanart>
     </assets>
   </extension>
 </addon>

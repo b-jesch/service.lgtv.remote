@@ -130,7 +130,7 @@ class Service(xbmc.Player):
 
         except self.Remote.NoConnectionToHostException:
             self.sessionEstablished = False
-            notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
+            notifyLog('No connection to host on %s' % self.lg_host, level=xbmc.LOGERROR)
 
     def onPlayBackStarted(self):
         if self.isPlayingVideo() and self.lg_protocol is not None:

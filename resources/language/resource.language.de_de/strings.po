@@ -118,12 +118,12 @@ msgid "Type in pairing key of TV device"
 msgstr "Pairing Schlüssel des TV Gerätes eingeben"
 
 msgctxt "#30031"
-msgid "Pairing with LG Smart TV on IP %s and %s successful. To activate pairing, Kodi must be restarted. Would you like to restart Kodi now?"
-msgstr "LG Smart TV auf IP %s über %s erfolgreich gepairt. Um das Pairing zu aktivieren, muss Kodi neu gestartet werden. Möchtest Du Kodi jetzt neu starten?"
+msgid "Pairing with LG Smart TV on IP %s and %s successful. For completing the procedure exit the Addon Settings."
+msgstr "LG Smart TV auf IP %s und %s erfolgreich gepairt. Zum Abschliessen des Setups die Addon Einstellungen verlassen."
 
 msgctxt "#30032"
-msgid "Session not established. Possibly Kodi must be restarted."
-msgstr "Es konnte keine Session zum Smart TV aufgebaut werden. Eventuell muss Kodi neu gestartet werden."
+msgid "Session not established."
+msgstr "Es konnte keine Session zum Smart TV aufgebaut werden."
 
 msgctxt "#30050"
 msgid "There wasn't found any LG Smart Devices on your network. Be sure your devices are turned on or enter IP of LG Smart TV manually."
