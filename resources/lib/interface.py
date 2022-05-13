@@ -63,19 +63,20 @@ class Interface(object):
                     notifyLog('Found device: %s:%s' % (self.host, port), level=xbmc.LOGDEBUG)
                     found = True
                     break
-                i += 1
-                xbmc.sleep(1000)
             except Exception as e:
-                pass
+                notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
+
+            xbmc.sleep(1000)
+            i = i + 1
         sock.close()
 
-        if not found: raise self.LGinNetworkNotFoundException('LG TV not found')
+        if not found: raise self.LGinNetworkNotFoundException()
         notifyLog("Using device: %s:%s" % (self.host, self.port), level=xbmc.LOGDEBUG)
 
     def auto_detect_accepted_protocol(self):
         if self._doesServiceExist(3000):
             notifyLog("Device use WebOS on Port 3000. Not supported.")
-            raise self.LGProtocolWebOSException("WebOS not supported.")
+            raise self.LGProtocolWebOSException()
 
         req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
 
@@ -93,7 +94,7 @@ class Interface(object):
             except Exception as e:
                 notifyLog('Error while testing connection: %s' % str(e), xbmc.LOGERROR)
             xbmc.sleep(1000)
-        raise self.LGProtocolNotAcceptedException("No accepted protocol found.")
+        raise self.LGProtocolNotAcceptedException()
 
     def get_session_id(self, pairing_key):
         if not pairing_key: return False
@@ -114,9 +115,7 @@ class Interface(object):
             if len(self.session_id) < 8: return False
 
             return self.session_id
-        except socket.timeout:
-            raise self.NoConnectionToHostException("No connection to host %s" % self.host)
-        except socket.error:
+        except (socket.timeout, socket.error):
             raise self.NoConnectionToHostException("No connection to host %s" % self.host)
 
     def handle_key_input(self, cmdcode):
@@ -125,7 +124,9 @@ class Interface(object):
             if 0 > int(cmdcode) or int(cmdcode) > highest_key_input:
                 raise KeyInputError("Key input %s is not supported." % cmdcode)
         except ValueError:
+            notifyLog("Key input %s is not a number" % cmdcode, xbmc.LOGERROR)
             raise KeyInputError("Key input %s is not a number" % cmdcode)
+
         if not self.session_id: raise Exception("No valid session key available.")
 
         command_url_for_protocol = {

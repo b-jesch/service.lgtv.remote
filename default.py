@@ -62,11 +62,11 @@ class Service(xbmc.Player):
                     if not self.Remote.session_id:
                         self.Remote.get_session_id(self.lg_pairing_key)
                         self.sessionEstablished = True
-                        notifyLog('Session established. Using session id %s.' % self.Remote.session_id, level=xbmc.LOGDEBUG)
+                        notifyLog('Session established. Using session id %s.' % self.Remote.session_id)
                 except self.Remote.NoConnectionToHostException:
                     self.sessionEstablished = False
                     self.Remote = None
-                    notifyLog('No connection to host on %s' % (self.lg_host), level=xbmc.LOGERROR)
+                    notifyLog('No connection to host on %s' % self.lg_host, level=xbmc.LOGERROR)
                     if init: notifyOSD(ADDON_NAME, LS(30054), icon=ICON_ERROR)
 
     def readSettings(self):
@@ -83,7 +83,7 @@ class Service(xbmc.Player):
         self.lg_seq_3D_off = ' '.join(ADDON.getSetting('lg_3D_off').replace(',', ' ').split()).split()
 
         self.Mon.settingsChanged = False
-        notifyLog('Settings reloaded', level=xbmc.LOGDEBUG)
+        notifyLog('Settings reloaded')
 
     def getStereoscopicMode(self):
         mode = {"off": 'OFF', "split_vertical": 'SBS', "split_horizontal": 'TAB',
@@ -120,13 +120,13 @@ class Service(xbmc.Player):
             self.getSettings()
             if self.lg_own_seqs_enabled:
                 sequence = own_sequence
-                notifyLog('Sending user sequence %s' % (sequence), level=xbmc.LOGDEBUG)
+                notifyLog('Sending user sequence %s' % sequence)
 
             for code in sequence:
                 if self.Remote.session_id is None: self.Remote.get_session_id(self.lg_pairing_key)
                 # let smart models time for response ;)
                 xbmc.sleep(self.lg_key_delay)
-                notifyLog('%s msec delayed, sending keycode %s. Response: %s.' % (self.lg_key_delay, code, self.Remote.handle_key_input(code)), level=xbmc.LOGDEBUG)
+                notifyLog('%s msec delayed, sending keycode %s. Response: %s.' % (self.lg_key_delay, code, self.Remote.handle_key_input(code)))
 
         except self.Remote.NoConnectionToHostException:
             self.sessionEstablished = False
@@ -142,15 +142,15 @@ class Service(xbmc.Player):
                     else:
                         return
 
-                notifyLog('Playing \'%s\'' % (_file), level=xbmc.LOGDEBUG)
-                notifyLog('sending sequence for 3D %s' % self.mode3D, level=xbmc.LOGDEBUG)
+                notifyLog('Playing \'%s\'' % (_file))
+                notifyLog('sending sequence for 3D %s' % self.mode3D)
                 self.sendCommand(__mode3D_on__[self.lg_protocol], self.lg_seq_3D_on)
                 self.isPlaying3D = True
 
     def onPlayBackStopped(self):
         _currentMode = self.mode3D
         if self.getStereoscopicMode() and self.isPlaying3D and self.mode3D == 'OFF':
-            notifyLog('Turn 3D %s mode off' % _currentMode, level=xbmc.LOGDEBUG)
+            notifyLog('Turn 3D %s mode off' % _currentMode)
             if _currentMode == 'SBS': __mode3D_off__ = __mode3DSBS_off__
             elif _currentMode == 'TAB': __mode3D_off__ = __mode3DTAB_off__
             else: return
@@ -161,7 +161,7 @@ class Service(xbmc.Player):
     def onPlayBackEnded(self):
         _currentMode = self.mode3D
         if self.getStereoscopicMode() and self.isPlaying3D and self.mode3D == 'OFF':
-            notifyLog('Turn 3D %s mode off' % _currentMode, level=xbmc.LOGDEBUG)
+            notifyLog('Turn 3D %s mode off' % _currentMode)
             if _currentMode == 'SBS':  __mode3D_off__ = __mode3DSBS_off__
             elif _currentMode == 'TAB': __mode3D_off__ = __mode3DTAB_off__
             else: return

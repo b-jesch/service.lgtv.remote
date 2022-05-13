@@ -30,5 +30,5 @@ def dialogYesNo(message, header=ADDON_NAME):
     return OSD.yesno(header, message)
 
 
-def notifyLog(message, level=xbmc.LOGINFO):
+def notifyLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s %s] %s' % (ADDON_ID, ADDON_VERSION, message), level)
