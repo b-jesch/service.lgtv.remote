@@ -191,7 +191,7 @@ class Service(xbmc.Player):
             dialogOSD(LS(30052))
         except interface.Interface.NoConnectionToHostException:
             notifyLog('No connection to host.', level=xbmc.LOGERROR)
-            dialogOSD(LS(30053) % (_host))
+            dialogOSD(LS(30053) % _host)
         except Exception as e:
             pass
 
