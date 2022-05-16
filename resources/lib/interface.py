@@ -20,9 +20,9 @@ class KeyInputError(Exception):
 
 class Interface(object):
 
-    _xml_version_string = '<?xml version="1.0" encoding="utf-8"?>'
+    _xmlv = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
-    _highest_key_input_for_protocol = {'hdcp': 255, 'roap': 1024}
+    _maxvalue = {'HDCP': 255, 'ROAP': 1024}
 
     class LGinNetworkNotFoundException(Exception): pass
     class LGProtocolWebOSException(Exception): pass
@@ -33,54 +33,49 @@ class Interface(object):
 
         self.port = port
         self.host = host
+        self.pairing_key = None
+        self.session_id = None
         if host is None: self.getip()
 
         self.protocol = protocol
-        if protocol is None: self.auto_detect_accepted_protocol()
 
-        self._pairing_key = None
-        self.session_id = None
+        if self.host and protocol is None:
+            if self.auto_detect_accepted_protocol():
+                self.pairing_key = keyboard(ADDON.getSetting('lg_pairing_key'), header=LS(30030))
+                if self.pairing_key: ADDON.setSetting('lg_pairing_key', self.pairing_key)
+
+        if self.host: self.get_session_id()
 
     def getip(self):
         if self.host: return self.host
-        strngtoXmit = 'M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\n' + \
-            'MAN: "ssdp:discover"\r\nMX: 2\r\nST: urn:schemas-upnp-org:device:MediaRenderer:1\r\n\r\n'
+        strngtoXmit = 'M-SEARCH * HTTP/1.1\r\n' \
+                      'HOST: 239.255.255.250:1900\r\n' \
+                      'MAN: "ssdp:discover"\r\n' \
+                      'MX: 2\r\n' \
+                      'ST: urn:schemas-upnp-org:device:MediaRenderer:1\r\n\r\n'.encode()
 
-        bytestoXmit = strngtoXmit.encode()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.settimeout(3)
-        found = False
-        i = 0
-
-        while not found and i < 5:
-            try:
-                sock.sendto(bytestoXmit, ('239.255.255.250', 1900))
-                gotbytes, addressport = sock.recvfrom(512)
-                gotstr = gotbytes.decode()
-                if re.search('LG', gotstr):
-                    notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
-                    self.host, port = addressport
-                    notifyLog('Found device: %s:%s' % (self.host, port), level=xbmc.LOGDEBUG)
-                    found = True
-                    break
-            except Exception as e:
-                notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
-
-            xbmc.sleep(1000)
-            i = i + 1
+        try:
+            sock.sendto(strngtoXmit, ('239.255.255.250', 1900))
+            gotbytes, addressport = sock.recvfrom(512)
+            gotstr = gotbytes.decode()
+            if re.search('LG', gotstr):
+                notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
+                self.host, port = addressport
+                notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
+        except (socket.timeout, socket.error) as e:
+            notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
         sock.close()
-
-        if not found: raise self.LGinNetworkNotFoundException()
-        notifyLog("Using device: %s:%s" % (self.host, self.port), level=xbmc.LOGDEBUG)
 
     def auto_detect_accepted_protocol(self):
         if self._doesServiceExist(3000):
             notifyLog("Device use WebOS on Port 3000. Not supported.")
             raise self.LGProtocolWebOSException()
 
-        req_key_xml_string = self._xml_version_string + '<auth><type>AuthKeyReq</type></auth>'
+        req_key_xml_string = self._xmlv + '<auth><type>AuthKeyReq</type></auth>'
 
-        for protocol in self._highest_key_input_for_protocol:
+        for protocol in self._maxvalue:
             try:
                 notifyLog("Testing protocol %s on %s:%s" % (protocol, self.host, self.port), level=xbmc.LOGDEBUG)
                 conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
@@ -90,19 +85,18 @@ class Interface(object):
                 if http_response.reason == 'OK':
                     self.protocol = protocol
                     notifyLog("Using protocol: %s" % self.protocol, level=xbmc.LOGDEBUG)
-                    return
+                    return True
             except Exception as e:
                 notifyLog('Error while testing connection: %s' % str(e), xbmc.LOGERROR)
+                return False
             xbmc.sleep(1000)
         raise self.LGProtocolNotAcceptedException()
 
-    def get_session_id(self, pairing_key):
-        if not pairing_key: return False
+    def get_session_id(self):
+        if not self.pairing_key: return False
 
-        self._pairing_key = pairing_key
-        notifyLog("Trying paring key: %s" % self._pairing_key, level=xbmc.LOGDEBUG)
-        pair_cmd_xml_string = self._xml_version_string + '<auth><type>AuthReq</type><value>' + \
-            self._pairing_key + '</value></auth>'
+        notifyLog("Trying paring key: %s" % self.pairing_key, level=xbmc.LOGDEBUG)
+        pair_cmd_xml_string = self._xmlv + '<auth><type>AuthReq</type><value>%s</value></auth>' % self.pairing_key
         try:
             conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
             conn.request('POST', '/%s/api/auth' % self.protocol, pair_cmd_xml_string, headers=self._headers)
@@ -113,29 +107,26 @@ class Interface(object):
             self.session_id = tree.find('session').text
             notifyLog("Session ID is %s" % self.session_id, level=xbmc.LOGDEBUG)
             if len(self.session_id) < 8: return False
-
             return self.session_id
+
         except (socket.timeout, socket.error):
             raise self.NoConnectionToHostException("No connection to host %s" % self.host)
 
     def handle_key_input(self, cmdcode):
-        highest_key_input = self._highest_key_input_for_protocol[self.protocol]
         try:
-            if 0 > int(cmdcode) or int(cmdcode) > highest_key_input:
-                raise KeyInputError("Key input %s is not supported." % cmdcode)
+            if not (0 < int(cmdcode) < self._maxvalue[self.protocol]):
+                raise KeyInputError("Key code %s is not supported." % cmdcode)
         except ValueError:
-            notifyLog("Key input %s is not a number" % cmdcode, xbmc.LOGERROR)
-            raise KeyInputError("Key input %s is not a number" % cmdcode)
-
-        if not self.session_id: raise Exception("No valid session key available.")
+            notifyLog("Key code %s is not a number" % cmdcode, xbmc.LOGERROR)
+            raise KeyInputError("Key code %s is not a number" % cmdcode)
 
         command_url_for_protocol = {
-            'hdcp': '/%s/api/dtv_wifirc' % self.protocol,
-            'roap': '/%s/api/command' % self.protocol,
+            'HDCP': '/%s/api/dtv_wifirc' % self.protocol.lower(),
+            'ROAP': '/%s/api/command' % self.protocol.lower(),
         }
 
-        key_input_xml_string = self._xml_version_string + '<command><session>' + self.session_id \
-            + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
+        key_input_xml_string = self._xmlv + '<command><session>' + self.session_id \
+                               + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
         conn = httplib.HTTPConnection(self.host, port=self.port)
         conn.request('POST', command_url_for_protocol[self.protocol], key_input_xml_string, headers=self._headers)
         return conn.getresponse().reason
@@ -147,6 +138,6 @@ class Interface(object):
             s.settimeout(1)
             s.connect((self.host, port))
             s.close()
-        except:
+            return True
+        except socket.timeout:
             return False
-        return True

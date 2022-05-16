@@ -2,22 +2,18 @@ import sys
 from resources.lib import interface
 from resources.lib.tools import *
 
+_host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
+_port = 8080 if ADDON.getSetting('lg_port') == '' else int(ADDON.getSetting('lg_port'))
 try:
     if sys.argv[1] == 'scan':
         notifyLog("Scanning for LG Smart TV Devices...", level=xbmc.LOGDEBUG)
-
-        _host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
-        _port = 8080 if ADDON.getSetting('lg_port') == '' else int(ADDON.getSetting('lg_port'))
         Remote = interface.Interface(host=_host, port=_port, protocol=None)
         notifyLog('Device (IP %s protocol %s) found' % (Remote.host, Remote.protocol.upper()), level=xbmc.LOGDEBUG)
         #
         # input pairing key if not exists
         #
         pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
-        if pairing_key is None:
-            kb = xbmc.Keyboard('', LS(30030))
-            kb.doModal()
-            if kb.isConfirmed() and kb.getText() != '':  pairing_key = kb.getText()
+        if pairing_key is None: pairing_key = keyboard('', LS(30030))
 
         _conn = Remote.get_session_id(pairing_key)
         if _conn:
@@ -43,7 +39,7 @@ except interface.Interface.LGProtocolNotAcceptedException:
     dialogOSD(LS(30052))
 except interface.Interface.NoConnectionToHostException:
     notifyLog('No connection to host.', level=xbmc.LOGERROR)
-    dialogOSD(LS(30053) % (_host))
+    dialogOSD(LS(30053) % _host)
 except IndexError:
     notifyLog('Calling this script outside of setup not allowed', xbmc.LOGERROR)
     dialogOSD(LS(30055))

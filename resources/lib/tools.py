@@ -12,14 +12,10 @@ ADDON_PATH = xbmcvfs.translatePath(ADDON.getAddonInfo('path'))
 ADDON_VERSION = ADDON.getAddonInfo('version')
 LS = ADDON.getLocalizedString
 
-ICON_CONNECTED = os.path.join(ADDON_PATH, 'resources', 'media', 'ok.png')
-ICON_ERROR = os.path.join(ADDON_PATH, 'resources', 'media', 'fail.png')
-ICON_DEFAULT = os.path.join(ADDON_PATH, 'resources', 'media', 'default.png')
-
 OSD = xbmcgui.Dialog()
 
 
-def notifyOSD(header, message, icon=ICON_DEFAULT):
+def notifyOSD(header, message, icon=xbmcgui.NOTIFICATION_INFO):
     OSD.notification(header, message, icon)
 
 
@@ -33,6 +29,10 @@ def dialogYesNo(message, header=ADDON_NAME):
 
 def notifyLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s %s] %s' % (ADDON_ID, ADDON_VERSION, message), level)
+
+
+def keyboard(input, header=ADDON_NAME):
+    return OSD.input(header, defaultt=input, type=xbmcgui.INPUT_ALPHANUM)
 
 
 def jsonrpc(query):

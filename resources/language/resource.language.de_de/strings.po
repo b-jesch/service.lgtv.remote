@@ -78,12 +78,12 @@ msgid "Use own Key Code Sequences"
 msgstr "Eigene Tastencodes verwenden"
 
 msgctxt "#30021"
-msgid "Key Code sequence 3D on"
-msgstr "Code Sequenz 3D ein"
+msgid "Code sequence 3D on (space separated)"
+msgstr "Code Sequenz 3D an (Leerzeichen getrennt)"
 
 msgctxt "#30022"
-msgid "Key Code sequence 3D off"
-msgstr "Code Sequenz 3D aus"
+msgid "Code sequence 3D off (space separated)"
+msgstr "Code Sequenz 3D aus (Leerzeichen getrennt)"
 
 msgctxt "#30023"
 msgid "500 msec"

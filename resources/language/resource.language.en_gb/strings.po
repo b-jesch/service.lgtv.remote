@@ -82,11 +82,11 @@ msgid "Use own Key Code Sequences"
 msgstr ""
 
 msgctxt "#30021"
-msgid "Key Code sequence 3D on"
+msgid "Code sequence 3D on (space separated)"
 msgstr ""
 
 msgctxt "#30022"
-msgid "Key Code sequence 3D off"
+msgid "Code sequence 3D off (space separated)"
 msgstr ""
 
 #delay
