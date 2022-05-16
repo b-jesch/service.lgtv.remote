@@ -1,5 +1,8 @@
 import json
 import re
+
+import xbmc
+
 from resources.lib import interface
 from resources.lib.tools import *
 
@@ -12,10 +15,27 @@ __patternSBS__ =  '[-. _]h?sbs[-. _]'
 __patternTAB__ =  '[-. _]h?tab[-. _]'
 
 # Key sequences ROAP/HDCP
-__mode3DSBS_on__ =     {'roap': ['400', '15', '20'], 'hdcp': ['220', '68', '6', '68']}
-__mode3DSBS_off__ =    {'roap': ['400', '20', '400', '14', '20', '400'], 'hdcp': ['220', '68', '220', '68', '7', '68', '220', '68']}
-__mode3DTAB_on__ =     {'roap': ['400', '15', '15', '20'], 'hdcp': ['220', '68', '6', '6', '68']}
-__mode3DTAB_off__ =    {'roap': ['400', '20', '400', '14', '14', '20', '400'], 'hdcp': ['220', '68', '220', '68', '7', '7', '68', '220', '68']}
+__mode3DSBS_on__ =  {'roap': ['400', '15', '20'],
+                     'hdcp': ['220', '68', '6', '68']}
+__mode3DSBS_off__ = {'roap': ['400', '20', '400', '14', '20', '400'],
+                     'hdcp': ['220', '68', '220', '68', '7', '68', '220', '68']}
+__mode3DTAB_on__ =  {'roap': ['400', '15', '15', '20'],
+                     'hdcp': ['220', '68', '6', '6', '68']}
+__mode3DTAB_off__ = {'roap': ['400', '20', '400', '14', '14', '20', '400'],
+                     'hdcp': ['220', '68', '220', '68', '7', '7', '68', '220', '68']}
+
+
+cmd_seq = dict({'split_vertical':   {'on':  {'ROAP': ['400', '15', '20'],
+                                             'HDCP': ['220', '68', '6', '68']},
+                                     'off': {'ROAP': ['400', '20', '400', '14', '20', '400'],
+                                             'HDCP': ['220', '68', '220', '68', '7', '68', '220', '68']}},
+                'split_horizontal': {'on':  {'ROAP': ['400', '15', '15', '20'],
+                                             'HDCP': ['220', '68', '6', '6', '68']},
+                                     'off': {'ROAP': ['400', '20', '400', '14', '14', '20', '400'],
+                                             'HDCP': ['220', '68', '220', '68', '7', '7', '68', '220', '68']}}
+                })
+
+mode_3d = False
 
 __mode3D_on__ = None
 __mode3D_off__ = None
@@ -196,7 +216,52 @@ class Service(xbmc.Player):
             pass
 
 
-RemoteService = Service()
-RemoteService.poll()
-del RemoteService
-notifyLog('Service finished')
+class EventMonitor(xbmc.Monitor):
+    def __init__(self, *args, **kwargs):
+        xbmc.Monitor.__init__(self)
+
+        self.mode_3d = None
+        self.methodDict = {'Player.OnAVStart': self.switch_on,
+                           'Player.OnStop': self.switch_off}
+
+    def err(self, method, data):
+        notifyLog("Discard notification: %s" % method)
+
+    def onNotification(self, sender, method, data):
+        notifyLog("Notification received: %s: %s - %s" % (sender, method, data))
+        self.methodDict.get(method, self.err)(method, data)
+
+    def switch_on(self, method, data):
+        notifyLog('%s: %s' % (method, data))
+        query = {"method": "GUI.GetProperties", "params": {"properties": ["stereoscopicmode"]}}
+        res = jsonrpc(query)
+        if res.get('stereoscopicmode', False) and res['stereoscopicmode']['mode'] in ['split_vertical',
+                                                                                      'split_horizontal']:
+            if self.mode_3d is None or not self.mode_3d:
+                self.send_sequence(True, res['stereoscopicmode']['mode']['on'][ADDON.getSetting('lg_protocol')])
+            else:
+                self.send_sequence(False, res['stereoscopicmode']['mode']['off'][ADDON.getSetting('lg_protocol')])
+
+    def switch_off(self, method, data):
+        notifyLog('%s: %s' % (method, data))
+
+    def send_sequence(self, status_3d, sequence):
+        pass
+    
+    def main(self):
+        while not self.abortRequested():
+            xbmc.sleep(10000)
+
+
+if __name__ == '__main__':
+
+    RemoteService = Service()
+    EvMon = EventMonitor()
+
+    if __name__ == '__main__':
+        notifyLog('Start Service', xbmc.LOGINFO)
+        RemoteService.poll()
+        EvMon.main()
+        notifyLog('Finish Service', xbmc.LOGINFO)
+        del RemoteService
+

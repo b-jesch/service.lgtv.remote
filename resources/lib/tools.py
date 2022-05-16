@@ -3,6 +3,7 @@ import xbmcgui
 import xbmcaddon
 import xbmcvfs
 import os
+import json
 
 ADDON = xbmcaddon.Addon()
 ADDON_NAME = ADDON.getAddonInfo('name')
@@ -32,3 +33,14 @@ def dialogYesNo(message, header=ADDON_NAME):
 
 def notifyLog(message, level=xbmc.LOGDEBUG):
     xbmc.log('[%s %s] %s' % (ADDON_ID, ADDON_VERSION, message), level)
+
+
+def jsonrpc(query):
+    querystring = {"jsonrpc": "2.0", "id": 1}
+    querystring.update(query)
+    try:
+        response = json.loads(xbmc.executeJSONRPC(json.dumps(querystring)))
+        if 'result' in response: return response['result']
+    except TypeError as e:
+        notifyLog('Error executing JSON RPC: {}'.format(e.args), level=xbmc.LOGERROR)
+    return False
