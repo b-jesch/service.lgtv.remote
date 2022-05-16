@@ -64,7 +64,9 @@ class Interface(object):
                 notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
                 self.host, port = addressport
                 notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
-        except (socket.timeout, socket.error) as e:
+            else:
+                raise self.LGinNetworkNotFoundException('No smart devices found')
+        except (socket.timeout, socket.error, self.LGinNetworkNotFoundException) as e:
             notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
         sock.close()
 
