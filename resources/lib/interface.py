@@ -122,7 +122,7 @@ class Interface(object):
 
     def handle_key_input(self, cmdcode):
         try:
-            if not (0 < int(cmdcode) < self._protocols[self.protocol]):
+            if not (0 < cmdcode < self._protocols[self.protocol]):
                 raise KeyInputError("Key code %s is not supported." % cmdcode)
         except ValueError:
             notifyLog("Key code %s is not a number" % cmdcode, xbmc.LOGERROR)
