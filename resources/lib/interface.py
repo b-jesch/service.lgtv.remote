@@ -22,7 +22,7 @@ class Interface(object):
 
     _xmlv = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
-    _maxvalue = {'HDCP': 255, 'ROAP': 1024}
+    _maxvalue = {'HDCP': [255, 30016], 'ROAP': [1024, 30015]}
 
     class LGinNetworkNotFoundException(Exception): pass
     class LGProtocolWebOSException(Exception): pass
@@ -35,7 +35,7 @@ class Interface(object):
         self.host = host
         self.pairing_key = None
         self.session_id = None
-        if host is None: self.getip()
+        if self.host is None: self.getip()
 
         self.protocol = protocol
 
@@ -60,13 +60,12 @@ class Interface(object):
             sock.sendto(strngtoXmit, ('239.255.255.250', 1900))
             gotbytes, addressport = sock.recvfrom(512)
             gotstr = gotbytes.decode()
-            if re.search('LG', gotstr):
+            if re.search('LGE_DLNA_SDK', gotstr):
                 notifyLog('Returned: %s' % gotstr, level=xbmc.LOGDEBUG)
                 self.host, port = addressport
+                ADDON.setSetting('lg_host', self.host)
                 notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
-            else:
-                raise self.LGinNetworkNotFoundException('No smart devices found')
-        except (socket.timeout, socket.error, self.LGinNetworkNotFoundException) as e:
+        except (socket.timeout, socket.error) as e:
             notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
         sock.close()
 
@@ -87,12 +86,14 @@ class Interface(object):
                 if http_response.reason == 'OK':
                     self.protocol = protocol
                     notifyLog("Using protocol: %s" % self.protocol, level=xbmc.LOGDEBUG)
+                    ADDON.setSetting('lg_protocol', self._maxvalue[protocol][1])
                     return True
             except Exception as e:
                 notifyLog('Error while testing connection: %s' % str(e), xbmc.LOGERROR)
-                return False
+                continue
+
             xbmc.sleep(1000)
-        raise self.LGProtocolNotAcceptedException()
+        return False
 
     def get_session_id(self):
         if not self.pairing_key: return False
@@ -116,7 +117,7 @@ class Interface(object):
 
     def handle_key_input(self, cmdcode):
         try:
-            if not (0 < int(cmdcode) < self._maxvalue[self.protocol]):
+            if not (0 < int(cmdcode) < self._maxvalue[self.protocol][0]):
                 raise KeyInputError("Key code %s is not supported." % cmdcode)
         except ValueError:
             notifyLog("Key code %s is not a number" % cmdcode, xbmc.LOGERROR)
@@ -141,5 +142,5 @@ class Interface(object):
             s.connect((self.host, port))
             s.close()
             return True
-        except socket.timeout:
+        except (socket.timeout, ConnectionRefusedError):
             return False

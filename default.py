@@ -36,6 +36,7 @@ class EventMonitor(xbmc.Monitor):
         xbmc.Monitor.__init__(self)
 
         self.mode_3d = None
+        self.getSettings()
 
         self.lg_host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
         self.lg_port = ADDON.getSetting('lg_port')
@@ -48,6 +49,17 @@ class EventMonitor(xbmc.Monitor):
 
         self.Interface = interface.Interface(host=self.lg_host, port=self.lg_port, protocol=self.lg_protocol)
         if self.Interface.session_id is None: notifyOSD(ADDON_NAME, LS(30054), xbmcgui.NOTIFICATION_ERROR)
+
+    def getSettings(self):
+        self.lg_host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
+        self.lg_port = ADDON.getSetting('lg_port')
+        self.lg_protocol = None if ADDON.getSetting('lg_protocol') == LS(30017) else ADDON.getSetting('lg_protocoll')
+        self.lg_pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
+        self.lg_key_delay = int(re.match('\d+', ADDON.getSetting('lg_delay')).group())
+
+    def onSettingsChanged(self):
+        notifyLog('Settings changed, reload...')
+        self.getSettings()
 
     def onNotification(self, sender, method, data):
         notifyLog("Notification received: %s: %s - %s" % (sender, method, data))
@@ -77,9 +89,9 @@ class EventMonitor(xbmc.Monitor):
             xbmc.sleep(self.lg_key_delay)
 
     def main(self):
-        while not self.abortRequested():
-            xbmc.sleep(30000)
-            self.Interface = interface.Interface(host=self.lg_host, port=self.lg_port, protocol=self.lg_protocol)
+        while not self.waitForAbort(30):
+            if self.Interface.session_id is None:
+                self.Interface = interface.Interface(host=self.lg_host, port=self.lg_port, protocol=self.lg_protocol)
 
 
 if __name__ == '__main__':

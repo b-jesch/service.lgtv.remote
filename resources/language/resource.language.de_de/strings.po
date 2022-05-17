@@ -62,8 +62,8 @@ msgid "HDCP"
 msgstr "HDCP"
 
 msgctxt "#30017"
-msgid "auto detect"
-msgstr "automatische Suche"
+msgid "not specified"
+msgstr "nicht spezifiziert"
 
 msgctxt "#30018"
 msgid "extended Settings"
