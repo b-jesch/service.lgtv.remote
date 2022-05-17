@@ -15,10 +15,10 @@ Protocol ROAP (model series > 2012) decimal codes:
 9   Number 7
 10  Number 8
 11  Number 9
-12  UP key among remote Controller�s 4 direction keys
-13  DOWN key among remote Controller�s 4 direction keys
-14  LEFT key among remote Controller�s 4 direction keys
-15  RIGHT key among remote Controller�s 4 direction keys
+12  UP key among remote Controllers 4 direction keys
+13  DOWN key among remote Controllers 4 direction keys
+14  LEFT key among remote Controllers 4 direction keys
+15  RIGHT key among remote Controllers 4 direction keys
 20  OK
 21  Home menu
 22  Menu key (same with Home menu key)
@@ -72,71 +72,72 @@ Protocol ROAP (model series > 2012) decimal codes:
 416 Switching between primary/secondary video
 417 My Apps
 
-Protocol HDCP (model series 2011) hex codes:
+Protocol HDCP (model series 2011) hex (decimal) codes:
 
-POWER      - 0x08
+POWER     - 0x08 (8)
 
-Energy    - 0x95
-AV        - 0x30
-INPUT     - 0x0B
-TV/RAD    - 0xF0
+Energy    - 0x95 (149)
+AV        - 0x30 (48)
+INPUT     - 0x0B (11)
+TV/RAD    - 0xF0 (240)
 
-0         - 0x10
-1         - 0x11
-2         - 0x12
-3         - 0x13
-4         - 0x14
-5         - 0x15
-6         - 0x16
-7         - 0x17
-8         - 0x18
-9         - 0x19
+0         - 0x10 (16)
+1         - 0x11 (17)
+2         - 0x12 (18)
+3         - 0x13 (19)
+4         - 0x14 (20)
+5         - 0x15 (21)
+6         - 0x16 (22)
+7         - 0x17 (23)
+8         - 0x18 (24)
+9         - 0x19 (25)
 
-LIST      - 0x53
-Q.VIEW    - 0x1A
-VOL+      - 0x02
-VOL-      - 0x03
-FAV       - 0x1E
-RATIO     - 0x79
-MUTE      - 0x09
-CH+       - 0x00
-CH-       - 0x01
+LIST      - 0x53 (83)
+Q.VIEW    - 0x1A (26)
+VOL+      - 0x02 (2)
+VOL-      - 0x03 (3)
+FAV       - 0x1E (30)
+RATIO     - 0x79 (121)
+MUTE      - 0x09 (9)
+CH+       - 0x00 (0)
+CH-       - 0x01 (1)
 
-MENU/HOME - 0x43 / 0x23 (keep pressed 5sec)
-WIDGETS   - 0x58 (only US models)
-NETCAST   - 0x59
-Q.MENU    - 0x45
-3D        - 0xDC
+MENU/HOME - 0x43 (67) / 0x23 (35) (keep pressed 5sec)
+WIDGETS   - 0x58 (88) (only US models)
+NETCAST   - 0x59 (89)
+Q.MENU    - 0x45 (69)
+3D        - 0xDC (220)
 
-RIGHT     - 0x06
-LEFT      - 0x07
-UP        - 0x40
-DOWN      - 0x41
+RIGHT     - 0x06 (6)
+LEFT      - 0x07 (7)
+UP        - 0x40 (64)
+DOWN      - 0x41 (65)
 
-OK        - 0x44
+OK        - 0x44 (68)
 
-BACK      - 0x28
-GUIDE     - 0xA9
-EXIT      - 0x5B
+BACK      - 0x28 (40)
+GUIDE     - 0xA9 (169)
+EXIT      - 0x5B (91)
 
-RED       - 0x72
-GREEN     - 0x71
-YELLOW    - 0x63
-BLUE      - 0x61
-3D setup  - 0x61
+RED       - 0x72 (114)
+GREEN     - 0x71 (113)
+YELLOW    - 0x63 (99)
+BLUE      - 0x61 (97)
+3D setup  - 0x61 (97)
 
-TEXT      - 0x20
-T.OPT     - 0x21
-SUBTIT    - 0x39
+TEXT      - 0x20 (32)
+T.OPT     - 0x21 (33)
+SUBTIT    - 0x39 (57)
 
-LIVE TV   - 0x9E  (for DVR to return to live feed if paused or re-winded)
-REC       - 0xBD  (only on DVR models)
-STOP      - 0xB1
-PLAY      - 0xB0
-PAUSE     - 0xBA
-<<        - 0x8F
->>        - 0x8E
-SIMPLNK   - 0x7E
-INFO      - 0xAA
-AD        - 0x91
-APP       - 0x9F
+LIVE TV   - 0x9E (158) (for DVR to return to live feed if paused or re-winded)
+REC       - 0xBD (189) (only on DVR models)
+STOP      - 0xB1 (177)
+PLAY      - 0xB0 (176)
+PAUSE     - 0xBA (186)
+<<        - 0x8F (143)
+>>        - 0x8E (142)
+SIMPLNK   - 0x7E (126)
+INFO      - 0xAA (170)
+AD        - 0x91 (145)
+APP       - 0x9F (159)
+
