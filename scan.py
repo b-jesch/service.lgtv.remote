@@ -8,7 +8,7 @@ port = 8080 if ADDON.getSetting('lg_port') == '' else int(ADDON.getSetting('lg_p
 try:
     if sys.argv[1] == 'scan':
         notifyLog("Scanning for LG Smart TV Devices...", level=xbmc.LOGDEBUG)
-        Interface = interface.Interface(host=host, port=port, protocol=None)
+        Interface = interface.Interface(host=host, port=port, protocol=None, key=None)
         if not (Interface.host and Interface.protocol): raise Interface.LGinNetworkNotFoundException()
         if Interface.session_id:
             dialogOSD(LS(30031) % (Interface.host, Interface.pairing_key))

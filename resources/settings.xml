@@ -56,16 +56,16 @@
 			<group id="3" label="30018">
 				<setting id="lg_delay" type="string" label="30019" help="">
 					<level>0</level>
-					<default>30025</default>
+					<default>1000</default>
 					<constraints>
 						<options>
-							<option label="30023">30023</option>
-							<option label="30024">30024</option>
-							<option label="30025">30025</option>
-							<option label="30026">30026</option>
-							<option label="30027">30027</option>
-							<option label="30028">30028</option>
-							<option label="30029">30029</option>
+							<option label="30023">500</option>
+							<option label="30024">750</option>
+							<option label="30025">1000</option>
+							<option label="30026">1250</option>
+							<option label="30027">1500</option>
+							<option label="30028">1750</option>
+							<option label="30029">2000</option>
 						</options>
 					</constraints>
 					<control type="spinner" format="string"/>

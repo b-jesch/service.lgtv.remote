@@ -1,5 +1,3 @@
-import re
-
 from resources.lib import interface
 from resources.lib.tools import *
 
@@ -41,7 +39,7 @@ class EventMonitor(xbmc.Monitor):
         self.methodDict = {'Player.OnAVStart': self.switch_on,
                            'Player.OnStop': self.switch_off}
 
-        self.Interface = interface.Interface(host=self.lg_host, port=self.lg_port, protocol=self.lg_protocol)
+        self.Interface = interface.Interface(host=self.lg_host, port=self.lg_port, protocol=self.lg_protocol, key=self.lg_pairing_key)
         if self.Interface.session_id is None: notifyOSD(ADDON_NAME, LS(30054), xbmcgui.NOTIFICATION_ERROR)
 
     def getSettings(self):
@@ -49,7 +47,7 @@ class EventMonitor(xbmc.Monitor):
         self.lg_port = 8080 if ADDON.getSetting('lg_port') == '' else int(ADDON.getSetting('lg_port'))
         self.lg_protocol = None if ADDON.getSetting('lg_protocol') not in [LS(30015), LS(30016)] else ADDON.getSetting('lg_protocol')
         self.lg_pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
-        self.lg_key_delay = int(re.match('\d+', ADDON.getSetting('lg_delay')).group())
+        self.lg_key_delay = int(ADDON.getSetting('lg_delay'))
 
     def onSettingsChanged(self):
         notifyLog('Settings changed, reload...')
@@ -64,22 +62,21 @@ class EventMonitor(xbmc.Monitor):
         mode = determine_mode()
         if mode and (self.mode_3d is None or not self.mode_3d):
             self.send_sequence(cmd_seq[mode]['on'][ADDON.getSetting('lg_protocol')], 'on')
+            self.mode_3d = True
 
     def switch_off(self, method, data):
         notifyLog('%s: %s' % (method, data))
         mode = determine_mode()
         if mode and self.mode_3d:
-            try:
-                self.send_sequence(cmd_seq[mode]['off'][ADDON.getSetting('lg_protocol')], 'off')
-            except KeyError:
-                raise interface.Interface.LGProtocolNotAcceptedException
+            self.send_sequence(cmd_seq[mode]['off'][ADDON.getSetting('lg_protocol')], 'off')
+            self.mode_3d = False
 
     def send_sequence(self, sequence, onoff):
         if not self.Interface.session_id: return False
         if ADDON.getSetting('use_own_seq').lower() == 'true': sequence = ADDON.getSetting('lg_3D_%s' % onoff).split()
         for code in sequence:
-            notifyLog('%s msec delayed, sending keycode %s. Response: %s.' % (self.lg_key_delay, code,
-                                                                              self.Interface.handle_key_input(code)))
+            notifyLog('%s msec delay, sending keycode %s (%s): %s.' % (self.lg_key_delay, code, hex(code),
+                                                                       self.Interface.handle_key_input(code)))
             xbmc.sleep(self.lg_key_delay)
 
     def main(self):

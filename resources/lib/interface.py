@@ -29,20 +29,20 @@ class Interface(object):
     class LGProtocolNotAcceptedException(Exception): pass
     class NoConnectionToHostException(Exception): pass
 
-    def __init__(self, host=None, port=8080, protocol=None):
+    def __init__(self, host=None, port=8080, protocol=None, key=None):
 
         self.port = port
         self.host = host
         self.protocol = protocol
-        self.pairing_key = None
+        self.pairing_key = key
         self.session_id = None
 
         if self.host is None: self.discover()
 
         if protocol is None and self.host:
             if self.detect_supported_protocols():
-                self.pairing_key = keyboard(ADDON.getSetting('lg_pairing_key'), header=LS(30030))
-                if self.pairing_key: ADDON.setSetting('lg_pairing_key', self.pairing_key)
+                if self.pairing_key is None:
+                    self.pairing_key = keyboard(ADDON.getSetting('lg_pairing_key'), header=LS(30030))
 
         if self.host and self.pairing_key:
             if self.get_session_id():
@@ -133,8 +133,8 @@ class Interface(object):
             'ROAP': '/%s/api/command' % self.protocol.lower(),
         }
 
-        key_input_xml_string = self._xmlv + '<command><session>' + self.session_id \
-                               + '</session><type>HandleKeyInput</type><value>' + cmdcode + '</value></command>'
+        key_input_xml_string = self._xmlv + '<command><session>%s</session><type>HandleKeyInput</type>' \
+                                            '<value>%s</value></command>' % (self.session_id, cmdcode)
         conn = httplib.HTTPConnection(self.host, port=self.port)
         conn.request('POST', command_url_for_protocol[self.protocol], key_input_xml_string, headers=self._headers)
         return conn.getresponse().reason
