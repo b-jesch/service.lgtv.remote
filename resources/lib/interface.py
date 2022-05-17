@@ -22,7 +22,7 @@ class Interface(object):
 
     _xmlv = '<?xml version="1.0" encoding="utf-8"?>'
     _headers = {'Content-Type': 'application/atom+xml'}
-    _maxvalue = {'HDCP': [255, 30016], 'ROAP': [1024, 30015]}
+    _protocols = {'HDCP': 255, 'ROAP': 1024}
 
     class LGinNetworkNotFoundException(Exception): pass
     class LGProtocolWebOSException(Exception): pass
@@ -33,21 +33,24 @@ class Interface(object):
 
         self.port = port
         self.host = host
+        self.protocol = protocol
         self.pairing_key = None
         self.session_id = None
-        if self.host is None: self.getip()
 
-        self.protocol = protocol
+        if self.host is None: self.discover()
 
-        if self.host and protocol is None:
-            if self.auto_detect_accepted_protocol():
+        if protocol is None and self.host:
+            if self.detect_supported_protocols():
                 self.pairing_key = keyboard(ADDON.getSetting('lg_pairing_key'), header=LS(30030))
                 if self.pairing_key: ADDON.setSetting('lg_pairing_key', self.pairing_key)
 
-        if self.host: self.get_session_id()
+        if self.host and self.pairing_key:
+            if self.get_session_id():
+                ADDON.setSetting('lg_host', self.host)
+                ADDON.setSetting('lg_protocol', self.protocol)
+                ADDON.setSetting('lg_pairing_key', self.pairing_key)
 
-    def getip(self):
-        if self.host: return self.host
+    def discover(self):
         strngtoXmit = 'M-SEARCH * HTTP/1.1\r\n' \
                       'HOST: 239.255.255.250:1900\r\n' \
                       'MAN: "ssdp:discover"\r\n' \
@@ -65,35 +68,37 @@ class Interface(object):
                 self.host, port = addressport
                 ADDON.setSetting('lg_host', self.host)
                 notifyLog('Found device: %s' % self.host, level=xbmc.LOGDEBUG)
-        except (socket.timeout, socket.error) as e:
+            else:
+                raise self.LGinNetworkNotFoundException('No LG devices found')
+        except (socket.timeout, socket.error, self.LGinNetworkNotFoundException) as e:
             notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
+
         sock.close()
 
-    def auto_detect_accepted_protocol(self):
+    def detect_supported_protocols(self):
         if self._doesServiceExist(3000):
             notifyLog("Device use WebOS on Port 3000. Not supported.")
-            raise self.LGProtocolWebOSException()
+            return False
 
         req_key_xml_string = self._xmlv + '<auth><type>AuthKeyReq</type></auth>'
-
-        for protocol in self._maxvalue:
-            try:
-                notifyLog("Testing protocol %s on %s:%s" % (protocol, self.host, self.port), level=xbmc.LOGDEBUG)
+        try:
+            for protocol in self._protocols:
+                notifyLog("Check %s on %s:%s" % (protocol, self.host, self.port), level=xbmc.LOGDEBUG)
                 conn = httplib.HTTPConnection(self.host, port=self.port, timeout=3)
                 conn.request("POST", "/%s/api/auth" % protocol, req_key_xml_string, headers=self._headers)
                 http_response = conn.getresponse()
                 notifyLog("Got response: %s" % http_response.reason, level=xbmc.LOGDEBUG)
+
                 if http_response.reason == 'OK':
                     self.protocol = protocol
-                    notifyLog("Using protocol: %s" % self.protocol, level=xbmc.LOGDEBUG)
-                    ADDON.setSetting('lg_protocol', self._maxvalue[protocol][1])
+                    notifyLog("Use protocol: %s" % self.protocol, level=xbmc.LOGDEBUG)
                     return True
-            except Exception as e:
-                notifyLog('Error while testing connection: %s' % str(e), xbmc.LOGERROR)
-                continue
+                xbmc.sleep(1000)
+            raise self.LGProtocolNotAcceptedException('Protocol not supported')
 
-            xbmc.sleep(1000)
-        return False
+        except (self.LGProtocolNotAcceptedException, httplib.HTTPException,
+                ConnectionResetError, ConnectionRefusedError) as e:
+            notifyLog('ERROR: %s' % str(e), xbmc.LOGERROR)
 
     def get_session_id(self):
         if not self.pairing_key: return False
@@ -117,7 +122,7 @@ class Interface(object):
 
     def handle_key_input(self, cmdcode):
         try:
-            if not (0 < int(cmdcode) < self._maxvalue[self.protocol][0]):
+            if not (0 < int(cmdcode) < self._protocols[self.protocol]):
                 raise KeyInputError("Key code %s is not supported." % cmdcode)
         except ValueError:
             notifyLog("Key code %s is not a number" % cmdcode, xbmc.LOGERROR)
@@ -141,6 +146,6 @@ class Interface(object):
             s.settimeout(1)
             s.connect((self.host, port))
             s.close()
-            return True
-        except (socket.timeout, ConnectionRefusedError):
+            raise self.LGProtocolWebOSException()
+        except (socket.timeout, ConnectionRefusedError, self.LGProtocolWebOSException):
             return False

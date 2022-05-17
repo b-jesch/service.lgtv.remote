@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <settings version="1">
 	<section id="service.lgtv.remote">
-		<category id="einstellungen" label="5" help="">
+		<category id="settings" label="5" help="">
 			<group id="1">
 				<setting id="lg_scan_network" type="action" label="30014" help="">
 					<level>0</level>
@@ -34,11 +34,13 @@
 				</setting>
 				<setting id="lg_protocol" type="string" label="30012" help="">
 					<level>0</level>
-					<default>30017</default>
+					<default>not specified</default>
 					<constraints>
 						<allowempty>true</allowempty>
 					</constraints>
-					<control type="edit" format="string"/>
+					<control type="edit" format="string">
+						<heading>30017</heading>
+					</control>
 				</setting>
 				<setting id="lg_pairing_key" type="string" label="30013" help="">
 					<level>0</level>

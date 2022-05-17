@@ -38,12 +38,6 @@ class EventMonitor(xbmc.Monitor):
         self.mode_3d = None
         self.getSettings()
 
-        self.lg_host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
-        self.lg_port = ADDON.getSetting('lg_port')
-        self.lg_protocol = None if ADDON.getSetting('lg_protocol') == LS(30017) else ADDON.getSetting('lg_protocoll')
-        self.lg_pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
-        self.lg_key_delay = int(re.match('\d+', ADDON.getSetting('lg_delay')).group())
-
         self.methodDict = {'Player.OnAVStart': self.switch_on,
                            'Player.OnStop': self.switch_off}
 
@@ -52,8 +46,8 @@ class EventMonitor(xbmc.Monitor):
 
     def getSettings(self):
         self.lg_host = None if ADDON.getSetting('lg_host') == '' else ADDON.getSetting('lg_host')
-        self.lg_port = ADDON.getSetting('lg_port')
-        self.lg_protocol = None if ADDON.getSetting('lg_protocol') == LS(30017) else ADDON.getSetting('lg_protocoll')
+        self.lg_port = 8080 if ADDON.getSetting('lg_port') == '' else int(ADDON.getSetting('lg_port'))
+        self.lg_protocol = None if ADDON.getSetting('lg_protocol') not in [LS(30015), LS(30016)] else ADDON.getSetting('lg_protocol')
         self.lg_pairing_key = None if ADDON.getSetting('lg_pairing_key') == '' else ADDON.getSetting('lg_pairing_key')
         self.lg_key_delay = int(re.match('\d+', ADDON.getSetting('lg_delay')).group())
 
